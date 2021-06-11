@@ -10,3 +10,4 @@ v9
 -usunięcie błędu przy nieciągłości stanów
 v95
 -uzupełnienie programu o obsługę ruchu wielowymiarowego (display.js 196 i turing.js 157)
+-migracja na github
