@@ -1,0 +1,92 @@
+
+body{
+	overflow: auto;
+}
+.slider {
+	margin-left: 10px;
+	height: 20px;
+	background: #d3d3d3;
+	outline: none;
+	opacity: 0.8;
+}
+.slider::-moz-range-thumb {
+	width: 10px;
+	height: 20px;
+	background: #0704aa;
+	cursor: pointer;
+}
+.slider:disabled::-moz-range-thumb {
+	width: 10px;
+	height: 20px;
+	background: #8588a0;
+}
+
+#inputData{
+	margin: 0px;
+	height:150px;
+	width:100%
+}
+
+#inputButton,#startButton,
+#moveUpAmount,#moveDownButton,#moveLeftButton,#moveRightButton,
+#moveUpButton,#moveDownAmount,#moveLeftAmount,#moveRightAmount,
+#startErrorLabel{
+	margin: 0px;
+	height:20px;
+	width:100px
+}
+
+#animationCheckBox{
+	margin-left: 10px;
+}
+
+#animationLabel,#sliderLabel,#animationTimeLabel{
+	margin-left: 10px;
+	height:20px;
+	width:100px
+}
+#turingInterface{
+	margin: 0px;	
+}
+#mainContainer{
+	max-width:1960px;
+	display:flex;
+	flex-wrap:wrap;
+	grid-template-columns: min-content 1fr;
+	grid-template-rows: 4fr 1fr;
+	grid-template-area: "display editor input status";
+	gap:5px;
+	background-color:red;
+}
+#emulator{
+	background-color:blue;
+	resize:horizontal;
+	overflow: auto;
+	width:1000px;
+}
+#editor{
+	background-color:yellow;
+}
+#turingCanvas canvas{
+	width:100%;
+}
+#turingCanvas canvas::after{
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+
+#menu{
+	max-width:960px;
+	display:grid;
+	margin:auto;
+	grid-template-columns: 40% 60%;
+	align-items:center;
+	justify-items: center
+}
+#mainContainer>div{
+width:30%;	
+}
+#mainContainer>div+div{
+width:calc(70% - 5px);	
+}
