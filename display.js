@@ -1,13 +1,17 @@
 const max_columns = 11;
 const max_rows = 11;
 const max_red_offset = 3;
-const animationFrames = 50;
+const animationFramesDefault = 50;
+const nextStepTimeDefault = 1000;
 const Direction = {
 	UP: 1,
 	DOWN: 2,
 	LEFT: 3,
 	RIGHT: 4,
 }
+
+var nextStepTime = 1000;
+var animationFrames = 50;
 
 class Display {
 
@@ -37,6 +41,17 @@ class Display {
 		this.dataArray[this.pos[0] + this.posRed[0]][this.pos[1] + this.posRed[1]] = newChar;
 		this.doUpdate();
 	}
+	changeNextStepTime(newTime){
+		nextStepTime = newTime;
+	}
+	changeAnimationFrames(newFramesNum){
+		if(newFramesNum == 0){
+			animationFrames = 1;
+		}
+		else{
+			animationFrames = newFramesNum;
+		}
+	}
 
 	insertData(){
 		this.editMode = false;
@@ -56,7 +71,8 @@ class Display {
 					this.dataArray[y][x] = stringList[y][x];
 				}
 			}
-			
+
+			document.getElementById('startButton').innerHTML = "Start";
 			this.doUpdate();
 		}
 	}
@@ -73,6 +89,21 @@ class Display {
 			case Direction.RIGHT:
 				this.moveRight(value, callback);
 		}
+	}
+
+	resetPosition(callback = null){
+		this.editMode = false;
+		if(this.animationStarted == false) {
+			this.animationStarted = true;
+			this.state = 0;
+
+			this.destPosRed = [-this.posRed[0], -this.posRed[1]];
+			this.destPos = [-this.pos[0], -this.pos[1]];
+			
+			this.animationCounter = 0;
+			this.doUpdate(callback);
+		}
+		return 0;
 	}
 
 	canvasOnMouseClick(event) {
@@ -292,7 +323,12 @@ class Display {
 		}
 		else{
 			if(callback != null){
-				callback.startTuring();
+				if(document.getElementById('animationCheckBox').checked == true){
+					setTimeout(() => {callback.startTuring();}, nextStepTime);
+				}
+				else{
+					document.getElementById('startButton').removeAttribute('disabled');
+				}
 			}
 		}
 	}
