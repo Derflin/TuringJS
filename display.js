@@ -88,20 +88,6 @@ class Display {
 		}
 	}
 
-	makeMove(direction, value, callback = null) {
-		this.editMode = false;
-		switch (direction) {
-			case Direction.UP:
-				this.moveUp(value, 1, callback);
-			case Direction.DOWN:
-				this.moveDown(value, 1, callback);
-			case Direction.LEFT:
-				this.moveLeft(value, 1, callback);
-			case Direction.RIGHT:
-				this.moveRight(value, 1, callback);
-		}
-	}
-
 	makeBoardMove(direction, value) {
 		this.editMode = false;
 		switch (direction) {
@@ -206,6 +192,47 @@ class Display {
 	}
 
 	//private
+
+	moveTuring(callback = null, MoveValueX = 0, moveValueY = 0){
+		if(this.animationStarted == false) {
+			this.animationStarted = true;
+
+			var valueY = moveValueY;
+			var valueX = MoveValueX;
+			var dirY = 1;
+			var dirX = 1;
+
+			if(valueY < 0){
+				valueY = -valueY;
+				dirY = -1;
+			}
+			if(valueX < 0){
+				valueX = -valueX;
+				dirX = -1;
+			}
+			
+			if(valueY > max_red_offset - dirY * this.posRed[0]){
+				valueY = valueY - (max_red_offset - dirY * this.posRed[0]);
+				this.destPosRed[0] = dirY * (max_red_offset - dirY * this.posRed[0]);
+				this.destPos[0] = dirY * valueY;
+			}
+			else{
+				this.destPosRed[0] = dirY * valueY;
+			}
+
+			if(valueX > max_red_offset - dirX * this.posRed[1]){
+				valueX = valueX - (max_red_offset - dirX * this.posRed[1]);
+				this.destPosRed[1] = dirX * (max_red_offset - dirX * this.posRed[1]);
+				this.destPos[1] = dirX * valueX;
+			}
+			else{
+				this.destPosRed[1] = dirX * valueX;
+			}
+
+			this.animationCounter = 0;
+			this.doUpdate(callback);
+		}
+	}
 
 	moveUp(moveValue, moveRed = 0, callback = null) {
 		if(this.animationStarted == false) {

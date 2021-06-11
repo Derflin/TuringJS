@@ -21,22 +21,29 @@ class Turing {
         this.step = 0;
 
         //testowa tablica reguł
+		/*
         this.transit[0] = [];
-        this.transit[0][65] = [1, "B", [1, 0]];
+        this.transit[0][65] = [1, "B", [1, 1]];
         this.transit[0][0] = [0, "\0", [0, 0]];
+        this.transit[0][101] = [0, "f", [-1, 1]];
 
         this.transit[1] = [];
         this.transit[1][114] = [2, "y", [0, 1]];
+        this.transit[1][101] = [2, "f", [1, 1]];
         
         this.transit[2] = [];
-        this.transit[2][101] = [2, "p", [0, 0]];
+        this.transit[2][101] = [3, "f", [-1, 1]];
         this.transit[2][112] = [4, "t", [0, -1]];
 
         this.transit[3] = [];
         this.transit[3][101] = [4, "u", [0, -1]];
+        this.transit[3][109] = [3, "n", [-1, -1]];
+        this.transit[3][78] = [4, "O", [1, -1]];
   
         this.transit[4] = [];
         this.transit[4][121] = [4, "y", [0, 0]];
+        this.transit[4][102] = [4, "f", [0, 0]];
+		*/
     }
 
     changeTransit(newTransit){
@@ -130,7 +137,7 @@ class Turing {
         }
 
         if(this.processing){
-            if(typeof this.transit[curState][curChar] !== 'undefined'){
+            if(typeof this.transit[curState] !== 'undefined' && typeof this.transit[curState][curChar] !== 'undefined'){
                 this.step += 1;
                 document.getElementById('startErrorLabel').innerHTML = "Step " + turing.step;
                 
@@ -150,24 +157,11 @@ class Turing {
                 display.changeChar(newChar);
     
                 setTimeout(() => { //czekanie 1s przed ruchem
-                    if((move.length == 2 && move[0] == 0 && move[1] == 0) || (move.length == 1 && move[0] == 0)){ //zabezpieczenie przed zmianą stanu/litery bez poruszenia się
-                        display.makeMove(Direction.RIGHT, 0, this);
+                    if(move.length == 2){ // ruch dla pełnej tablicy ruchu
+                        display.moveTuring(this, move[0], move[1]);
                     }
-                    else{
-                        if(move[0] != 0){ //sprawdzenie przeunięcia w osi X
-                            if(move[0] > 0){ //przesunięcie w prawo
-                                display.makeMove(Direction.RIGHT, move[0], this);
-                            } else{ //przesunięcie w lewo
-                                display.makeMove(Direction.LEFT, -move[0], this);
-                            }
-                        }
-                        if(move[1] != 0){ //sprawdzenie przeunięcia w osi Y
-                            if(move[1] > 0){ //przesunięcie w dół
-                                display.makeMove(Direction.DOWN, move[1], this);
-                            } else{ //przesunięcie w górę
-                                display.makeMove(Direction.UP, -move[1], this);
-                            }
-                        }
+                    else{ // ruch poziomy (w osi X)
+                        display.moveTuring(this, move[0]);
                     }
                 }, nextStepTime);
             }
