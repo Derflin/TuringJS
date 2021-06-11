@@ -54,22 +54,30 @@ class Turing {
     disableElements(){
         document.getElementById('animationTime').setAttribute('disabled', true);
         document.getElementById('inputButton').setAttribute('disabled', true);
-        document.getElementById('moveUpButton').setAttribute('disabled', true);
-        document.getElementById('moveDownButton').setAttribute('disabled', true);
-        document.getElementById('moveLeftButton').setAttribute('disabled', true);
-        document.getElementById('moveRightButton').setAttribute('disabled', true);
         document.getElementById('animationCheckBox').setAttribute('disabled', true);
+        this.disableMove();
     }
 
     enableElements(){
         document.getElementById('animationTime').removeAttribute('disabled');
         document.getElementById('inputButton').removeAttribute('disabled');
+        document.getElementById('animationCheckBox').removeAttribute('disabled');
+        document.getElementById('startButton').removeAttribute('disabled');
+        this.enableMove();
+    }
+
+    disableMove(){
+        document.getElementById('moveUpButton').setAttribute('disabled', true);
+        document.getElementById('moveDownButton').setAttribute('disabled', true);
+        document.getElementById('moveLeftButton').setAttribute('disabled', true);
+        document.getElementById('moveRightButton').setAttribute('disabled', true);
+    }
+
+    enableMove(){
         document.getElementById('moveUpButton').removeAttribute('disabled');
         document.getElementById('moveDownButton').removeAttribute('disabled');
         document.getElementById('moveLeftButton').removeAttribute('disabled');
         document.getElementById('moveRightButton').removeAttribute('disabled');
-        document.getElementById('animationCheckBox').removeAttribute('disabled');
-        document.getElementById('startButton').removeAttribute('disabled');
     }
 
     checkDataAndStart(){ //sprawdzenie, czy wprowadzono dane do sortowania i rozpoczęcie obliczeń
@@ -78,8 +86,8 @@ class Turing {
         this.step = 0;
 
         if(document.getElementById('animationCheckBox').checked == true){
-            if(display.pos[0] + display.posRed[0] != 0 || display.pos[1] + display.posRed[1] != 0){
-                display.resetPosition(this);
+            if(display.pos[0] != 0 || display.posRed[0] != 0 || display.pos[1] != 0 || display.posRed[1] != 0){
+                display.resetRed(this);
             }
             else{
                 this.startTuring();
@@ -89,8 +97,8 @@ class Turing {
             document.getElementById('animationTime').removeAttribute('disabled');
             document.getElementById('animationCheckBox').removeAttribute('disabled');
 
-            if(display.pos[0] + display.posRed[0] != 0 || display.pos[1] + display.posRed[1] != 0){
-                display.resetPosition(this);
+            if(display.pos[0] != 0 || display.posRed[0] != 0 || display.pos[1] != 0 || display.posRed[1] != 0){
+                display.resetRed(this);
             }
         }
     }
@@ -122,45 +130,56 @@ class Turing {
         }
 
         if(this.processing){
-            this.step += 1;
-            document.getElementById('startErrorLabel').innerHTML = "Step " + turing.step;
-            
-            //aktualizacja ostatnio przetwarzanych danych
-            this.lastChar = curChar;
-            this.lastState = curState;
-            this.lastPos[0] = display.pos[0] + display.posRed[0];
-            this.lastPos[1] = display.pos[1] + display.posRed[1];
+            if(typeof this.transit[curState][curChar] !== 'undefined'){
+                this.step += 1;
+                document.getElementById('startErrorLabel').innerHTML = "Step " + turing.step;
+                
+                //aktualizacja ostatnio przetwarzanych danych
+                this.lastChar = curChar;
+                this.lastState = curState;
+                this.lastPos[0] = display.pos[0] + display.posRed[0];
+                this.lastPos[1] = display.pos[1] + display.posRed[1];
+        
+                //pobranie nowych wartości i kierunku ruchu z tablisy reguł
+                var newState = this.transit[curState][curChar][0];
+                var newChar = this.transit[curState][curChar][1];
+                var move = this.transit[curState][curChar][2];
+        
+                //aktualizacja stanu i litery
+                display.changeState(newState);
+                display.changeChar(newChar);
     
-            //pobranie nowych wartości i kierunku ruchu z tablisy reguł
-            var newState = this.transit[curState][curChar][0];
-            var newChar = this.transit[curState][curChar][1];
-            var move = this.transit[curState][curChar][2];
-    
-            //aktualizacja stanu i litery
-            display.changeState(newState);
-            display.changeChar(newChar);
-
-            setTimeout(() => { //czekanie 1s przed ruchem
-                if(move[0] == 0 && move[1] == 0){ //zabezpieczenie przed zmianą stanu/litery bez poruszenia się
-                    display.makeMove(Direction.RIGHT, 0, this);
-                }
-                else{
-                    if(move[0] != 0){ //sprawdzenie przeunięcia w osi X
-                        if(move[0] > 0){ //przesunięcie w prawo
-                            display.makeMove(Direction.RIGHT, move[0], this);
-                        } else{ //przesunięcie w lewo
-                            display.makeMove(Direction.LEFT, -move[0], this);
+                setTimeout(() => { //czekanie 1s przed ruchem
+                    if(move[0] == 0 && move[1] == 0){ //zabezpieczenie przed zmianą stanu/litery bez poruszenia się
+                        display.makeMove(Direction.RIGHT, 0, this);
+                    }
+                    else{
+                        if(move[0] != 0){ //sprawdzenie przeunięcia w osi X
+                            if(move[0] > 0){ //przesunięcie w prawo
+                                display.makeMove(Direction.RIGHT, move[0], this);
+                            } else{ //przesunięcie w lewo
+                                display.makeMove(Direction.LEFT, -move[0], this);
+                            }
+                        }
+                        if(move[1] != 0){ //sprawdzenie przeunięcia w osi Y
+                            if(move[1] > 0){ //przesunięcie w dół
+                                display.makeMove(Direction.DOWN, move[1], this);
+                            } else{ //przesunięcie w górę
+                                display.makeMove(Direction.UP, -move[1], this);
+                            }
                         }
                     }
-                    if(move[1] != 0){ //sprawdzenie przeunięcia w osi Y
-                        if(move[1] > 0){ //przesunięcie w dół
-                            display.makeMove(Direction.DOWN, move[1], this);
-                        } else{ //przesunięcie w górę
-                            display.makeMove(Direction.UP, -move[1], this);
-                        }
-                    }
-                }
-            }, nextStepTime);
+                }, nextStepTime);
+            }
+            else{
+                this.processing = false;
+                this.lastChar = undefined;
+                
+                document.getElementById('startErrorLabel').innerHTML = "There's no rule for current char nad state! Turing stopped working.";
+                document.getElementById('startButton').innerHTML = "Start";
+                this.enableElements();
+            }
+           
         }
     }
 }

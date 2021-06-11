@@ -3,6 +3,9 @@
 <head>
     <title>Turing Display</title>
 	<style>
+		body{
+			overflow: auto;
+		}
 		.slider {
 			height: 20px;
 			background: #d3d3d3;
@@ -29,124 +32,169 @@
     let turing = new Turing();
     let display = new Display();
 </script>
+<div id="turingInterface">
+	<h2>Insert Data</h2>
+	<textarea style="margin: 0px;height:150px;width:765px" id="inputData">Area Help Needed Immediately Andrzej Droprate Such a WORDDDDDDDDDOOOOOOOO</textarea>
+	<br/>
+	<button style="margin: 0px;height:20px;width:100px" id="inputButton" onclick="display.insertData()">Insert</button> 
+	<br/><br/>
 
-<h2>Insert Data</h2>
-<textarea style="margin: 0px;height:150px;width:800px" id="inputData">Area Help Needed Immediately Andrzej Droprate Such a WORDDDDDDDDDOOOOOOOO</textarea>
-<br/>
-<button style="margin: 0px;height:20px;width:100px" id="inputButton" onclick="display.insertData()">Insert</button> 
-<br/><br/>
+	<h2>Main Turing Display</h2>
+	<button style="margin: 0px;height:20px;width:100px" id="moveUpButton" onclick="display.makeBoardMove(Direction.UP, document.getElementById('moveUpAmount').value)">Up</button>
+	<textarea style="margin: 0px;height:20px;width:100px" id="moveUpAmount">10</textarea>
+	<label style="margin-left: 10px;height:20px;width:100px">Animation</label>
+	<input style="margin-left: 10px;" type="checkbox" id="animationCheckBox" checked autocomplete="off"/>
+	<script>
+		var animCheckBox = document.getElementById('animationCheckBox');
 
-<h2>Main Turing Display</h2>
-<button style="margin: 0px;height:20px;width:100px" id="moveUpButton" onclick="display.makeMove(Direction.UP, document.getElementById('moveUpAmount').value)">Up</button>
-<textarea style="margin: 0px;height:20px;width:100px" id="moveUpAmount">10</textarea>
-<label style="margin-left: 10px;height:20px;width:100px">Animation</label>
-<input style="margin-left: 10px;" type="checkbox" id="animationCheckBox" checked autocomplete="off"/>
-<script>
-	var animCheckBox = document.getElementById('animationCheckBox');
+		animCheckBox.onclick = function(){
+			if(this.checked == false){
+				document.getElementById('sliderLabel').setAttribute('hidden', false);
+				document.getElementById('animationTime').setAttribute('hidden', false);
+				document.getElementById('animationTimeLabel').setAttribute('hidden', false);
 
-	animCheckBox.onclick = function(){
-		if(this.checked == false){
-			document.getElementById('sliderLabel').setAttribute('hidden', false);
-			document.getElementById('animationTime').setAttribute('hidden', false);
-			document.getElementById('animationTimeLabel').setAttribute('hidden', false);
+				display.changeNextStepTime(0);
+				display.changeAnimationFrames(1);
+			}
+			else{
+				document.getElementById('sliderLabel').removeAttribute('hidden');
+				document.getElementById('animationTime').removeAttribute('hidden');
+				document.getElementById('animationTimeLabel').removeAttribute('hidden');
+				
+				var animationSpeed = document.getElementById('animationTime').value / 50;
 
-			display.changeNextStepTime(0);
-			display.changeAnimationFrames(1);
+				display.changeNextStepTime((nextStepTimeDefault * (2 - animationSpeed)).toFixed(0));
+				display.changeAnimationFrames((animationFramesDefault * (2 - animationSpeed)).toFixed(0));
+			}
 		}
-		else{
-			document.getElementById('sliderLabel').removeAttribute('hidden');
-			document.getElementById('animationTime').removeAttribute('hidden');
-			document.getElementById('animationTimeLabel').removeAttribute('hidden');
-			
-			var animationSpeed = document.getElementById('animationTime').value / 50;
+	</script>
+	<br/>
+	<button style="margin: 0px;height:20px;width:100px" id="moveDownButton" onclick="display.makeBoardMove(Direction.DOWN, document.getElementById('moveDownAmount').value)">Down</button>
+	<textarea style="margin: 0px;height:20px;width:100px" id="moveDownAmount">10</textarea>
+	<label style="margin-left: 10px;height:20px;width:100px" id="sliderLabel">Animation speed:</label>
+	<input style="margin-left: 10px;" type="range" min="1" max="100" value="50" class="slider" id="animationTime" autocomplete="off">
+	<label style="margin-left: 10px;height:20px;width:100px" id="animationTimeLabel">100%</label>
+	<script>
+		var animationSlider = document.getElementById('animationTime');
+		var outputLabel = document.getElementById('animationTimeLabel');
 
-			display.changeNextStepTime((nextStepTimeDefault * (2 - animationSpeed)).toFixed(0));
-			display.changeAnimationFrames((animationFramesDefault * (2 - animationSpeed)).toFixed(0));
+		animationSlider.oninput = function() {
+			var newValue = this.value / 50;
+			outputLabel.innerHTML = "" + (newValue * 100).toFixed(0) + "%";
+			display.changeNextStepTime((nextStepTimeDefault * (2 - newValue)).toFixed(0));
+			display.changeAnimationFrames((animationFramesDefault * (2 - newValue)).toFixed(0));
+		} 
+	</script>
+	<br/>
+	<button style="margin: 0px;height:20px;width:100px" id="moveLeftButton" onclick="display.makeBoardMove(Direction.LEFT, document.getElementById('moveLeftAmount').value)">Left</button>
+	<textarea style="margin: 0px;height:20px;width:100px" id="moveLeftAmount">10</textarea>
+	<br/>
+	<button style="margin: 0px;height:20px;width:100px" id="moveRightButton" onclick="display.makeBoardMove(Direction.RIGHT, document.getElementById('moveRightAmount').value)">Right</button>
+	<textarea style="margin: 0px;height:20px;width:100px" id="moveRightAmount">10</textarea>
+	<button style="margin-left: 10px;height:20px;width:100px" id="startButton">Start</button>
+	<script>
+		var button = document.getElementById('startButton');
+		var tmpPos;
+
+		button.onclick = function() {
+			var buttonText = this.innerHTML;
+			var animationOn = document.getElementById('animationCheckBox').checked;
+
+			switch(buttonText){
+				case "Start":
+					if(animationOn == true){
+						this.innerHTML = "Stop";
+					}
+					else{
+						this.innerHTML = "Next Step";
+					}
+					step = 0;
+					turing.checkDataAndStart();
+					turing.enableMove();
+					break;
+				case "Stop":
+					this.innerHTML = "Continue";
+					turing.changeProcessing();
+					turing.enableMove();
+					document.getElementById('animationTime').removeAttribute('disabled');
+					document.getElementById('animationCheckBox').removeAttribute('disabled');
+					break;
+				case "Continue":
+					if(animationOn == true){
+						this.innerHTML = "Stop";
+						turing.disableElements();
+					}
+					else{
+						this.innerHTML = "Next Step";
+					}
+					turing.changeProcessing();
+					if(display.stopNextPos[0] != 0 || display.stopNextPos[1] != 0){
+						display.resetPosition(turing);
+					}
+					else{
+						turing.startTuring();
+					}
+					break;
+				case "Next Step":
+					if(animationOn == true){
+						this.innerHTML = "Stop";
+						turing.disableElements();
+					}
+					else{
+						button.setAttribute('disabled', true);
+						document.getElementById('startErrorLabel').innerHTML = "Step " + turing.step;
+					}
+
+					if(display.stopNextPos[0] != 0 || display.stopNextPos[1] != 0){
+						display.resetPosition(turing);
+					}
+					else{
+						turing.startTuring();
+					}
+					break;
+			}
 		}
-	}
-</script>
-<br/>
-<button style="margin: 0px;height:20px;width:100px" id="moveDownButton" onclick="display.makeMove(Direction.DOWN, document.getElementById('moveDownAmount').value)">Down</button>
-<textarea style="margin: 0px;height:20px;width:100px" id="moveDownAmount">10</textarea>
-<label style="margin-left: 10px;height:20px;width:100px" id="sliderLabel">Animation speed:</label>
-<input style="margin-left: 10px;" type="range" min="1" max="100" value="50" class="slider" id="animationTime" autocomplete="off">
-<label style="margin-left: 10px;height:20px;width:100px" id="animationTimeLabel">100%</label>
-<script>
-	var animationSlider = document.getElementById('animationTime');
-	var outputLabel = document.getElementById('animationTimeLabel');
+	</script>
+	<label style="margin-left: 10px;height:20px;width:100px" id="startErrorLabel"></label>
+	<br/><br/>
 
-	animationSlider.oninput = function() {
-		var newValue = this.value / 50;
-  		outputLabel.innerHTML = "" + (newValue * 100).toFixed(0) + "%";
-		display.changeNextStepTime((nextStepTimeDefault * (2 - newValue)).toFixed(0));
-		display.changeAnimationFrames((animationFramesDefault * (2 - newValue)).toFixed(0));
-	} 
-</script>
-<br/>
-<button style="margin: 0px;height:20px;width:100px" id="moveLeftButton" onclick="display.makeMove(Direction.LEFT, document.getElementById('moveLeftAmount').value)">Left</button>
-<textarea style="margin: 0px;height:20px;width:100px" id="moveLeftAmount">10</textarea>
-<br/>
-<button style="margin: 0px;height:20px;width:100px" id="moveRightButton" onclick="display.makeMove(Direction.RIGHT, document.getElementById('moveRightAmount').value)">Right</button>
-<textarea style="margin: 0px;height:20px;width:100px" id="moveRightAmount">10</textarea>
-<button style="margin-left: 10px;height:20px;width:100px" id="startButton">Start</button>
+</div>
+<div id="turingCanvas">
+	<canvas id="canvas" width="770" height="770"></canvas>
+	<script>
+		var canvas = document.getElementById('canvas');
+		canvas.addEventListener('click', (event)=>display.canvasOnMouseClick(event), false);
+		document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), false);
+	</script>
+</div>
 <script>
-	var button = document.getElementById('startButton');
-	var tmpPos;
+	var interface = document.getElementById('turingInterface');
 
-	button.onclick = function() {
-		var buttonText = this.innerHTML;
+	document.addEventListener('click', (event)=>display.canvasFocus(event), false);
+	document.addEventListener("keydown", function(e) {
+    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1 && !interface.contains(e.target)) {
+        e.preventDefault();
+
 		var animationOn = document.getElementById('animationCheckBox').checked;
 
-		switch(buttonText){
-			case "Start":
-				if(animationOn == true){
-					this.innerHTML = "Stop";
-				}
-				else{
-					this.innerHTML = "Next Step";
-				}
-				step = 0;
-				turing.checkDataAndStart();
-				break;
-			case "Stop":
-				this.innerHTML = "Continue";
-				turing.changeProcessing();
-        		document.getElementById('animationTime').removeAttribute('disabled');
-        		document.getElementById('animationCheckBox').removeAttribute('disabled');
-				break;
-			case "Continue":
-				if(animationOn == true){
-					this.innerHTML = "Stop";
-					turing.disableElements();
-				}
-				else{
-					this.innerHTML = "Next Step";
-				}
-				turing.changeProcessing();
-				turing.startTuring();
-				break;
-			case "Next Step":
-				if(animationOn == true){
-					this.innerHTML = "Stop";
-					turing.disableElements();
-				}
-				else{
-					button.setAttribute('disabled', true);
-					document.getElementById('startErrorLabel').innerHTML = "Step " + turing.step;
-				}
-				turing.startTuring();
-				break;
+		if(display.canvasClicked == true && display.animationStarted == false && (turing.processing == false || animationOn == false)){
+			switch(e.code){
+				case "ArrowUp":
+					display.makeBoardMove(Direction.UP, 1);
+					break;
+				case "ArrowDown":
+					display.makeBoardMove(Direction.DOWN, 1);
+					break;
+				case "ArrowLeft":
+					display.makeBoardMove(Direction.LEFT, 1);
+					break;
+				case "ArrowRight":
+					display.makeBoardMove(Direction.RIGHT, 1);
+					break;
+			}
 		}
-	}
-</script>
-<label style="margin-left: 10px;height:20px;width:100px" id="startErrorLabel"></label>
-<br/><br/>
-
-<canvas id="canvas" width="770" height="770"></canvas>
-<script>
-	var canvas = document.getElementById('canvas');
-	canvas.addEventListener('click', (event)=>display.canvasOnMouseClick(event), false);
-	document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), false);
+    }
+}, false);
 </script>
 </body>
 </html>

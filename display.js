@@ -9,6 +9,10 @@ const Direction = {
 	LEFT: 3,
 	RIGHT: 4,
 }
+const PageElement = {
+	Interface: 1,
+	Canvas: 2,
+}
 
 var nextStepTime = 1000;
 var animationFrames = 50;
@@ -26,6 +30,9 @@ class Display {
 		this.animationCounter = 0;
 		this.animationStarted = false;
 		this.dataArray = [];
+
+		this.stopNextPos = [0, 0];
+		this.canvasClicked = false;
 		
 		this.editMode = false;
 		this.editPos = [0, 0];
@@ -35,6 +42,10 @@ class Display {
 	
 	changeState(newState) {
 		this.state = newState;
+		this.doUpdate();
+	}
+	resetState(){
+		this.state = 0;
 		this.doUpdate();
 	}
 	changeChar(newChar) {
@@ -81,17 +92,31 @@ class Display {
 		this.editMode = false;
 		switch (direction) {
 			case Direction.UP:
-				this.moveUp(value, callback);
+				this.moveUp(value, 1, callback);
 			case Direction.DOWN:
-				this.moveDown(value, callback);
+				this.moveDown(value, 1, callback);
 			case Direction.LEFT:
-				this.moveLeft(value, callback);
+				this.moveLeft(value, 1, callback);
 			case Direction.RIGHT:
-				this.moveRight(value, callback);
+				this.moveRight(value, 1, callback);
 		}
 	}
 
-	resetPosition(callback = null){
+	makeBoardMove(direction, value) {
+		this.editMode = false;
+		switch (direction) {
+			case Direction.UP:
+				this.moveUp(value);
+			case Direction.DOWN:
+				this.moveDown(value);
+			case Direction.LEFT:
+				this.moveLeft(value);
+			case Direction.RIGHT:
+				this.moveRight(value);
+		}
+	}
+
+	resetRed(callback = null){
 		this.editMode = false;
 		if(this.animationStarted == false) {
 			this.animationStarted = true;
@@ -99,11 +124,46 @@ class Display {
 
 			this.destPosRed = [-this.posRed[0], -this.posRed[1]];
 			this.destPos = [-this.pos[0], -this.pos[1]];
+
+			this.stopNextPos = [0, 0];
 			
 			this.animationCounter = 0;
 			this.doUpdate(callback);
 		}
 		return 0;
+	}
+
+	resetPosition(callback = null){
+		this.editMode = false;
+		if(this.animationStarted == false) {
+			this.animationStarted = true;
+
+			this.destPosRed = [this.stopNextPos[0], this.stopNextPos[1]];
+			this.destPos = [-this.stopNextPos[0], -this.stopNextPos[1]];
+
+			this.stopNextPos = [0, 0];
+			
+			this.animationCounter = 0;
+			this.doUpdate(callback);
+		}
+		return 0;
+	}
+
+	canvasFocus(event){
+		var canvas = document.getElementById('turingCanvas');
+		var isClickInsideElement = canvas.contains(event.target);
+
+		if(isClickInsideElement){
+			this.canvasClicked = true;
+		}
+		else{
+			this.canvasClicked = false;
+
+			this.editPos = [0, 0];
+			this.editMode = false;
+
+			this.doUpdate();
+		}
 	}
 
 	canvasOnMouseClick(event) {
@@ -147,39 +207,55 @@ class Display {
 
 	//private
 
-	moveUp(moveValue, callback = null) {
+	moveUp(moveValue, moveRed = 0, callback = null) {
 		if(this.animationStarted == false) {
 			var value = moveValue;
 			if (!isNaN(value)) {
 				this.animationStarted = true;
-				
-				if(value > max_red_offset + this.posRed[0]){
-					value = value - (max_red_offset + this.posRed[0]);
-					this.destPosRed = [-(max_red_offset + this.posRed[0]), 0];
+
+				if(moveRed == 0){
 					this.destPos = [-value, 0];
-				}else{
-					this.destPosRed = [-value, 0];
-				}
-				
-				this.animationCounter = 0;
-				this.doUpdate(callback);
-			}
-		}
-		return 0;
-	}
-
-	moveDown(moveValue, callback = null) {
-		if(this.animationStarted == false) {
-			var value = moveValue;
-			if (!isNaN(value)) {
-				this.animationStarted = true;
-				
-				if(value > max_red_offset - this.posRed[0]){
-					value = value - (max_red_offset - this.posRed[0]);
-					this.destPosRed = [(max_red_offset - this.posRed[0]), 0];
-					this.destPos = [value, 0];
-				}else{
 					this.destPosRed = [value, 0];
+
+					this.stopNextPos[0] += parseInt(-value);
+				}
+				else{
+					if(value > max_red_offset + this.posRed[0]){
+						value = value - (max_red_offset + this.posRed[0]);
+						this.destPosRed = [-(max_red_offset + this.posRed[0]), 0];
+						this.destPos = [-value, 0];
+					}else{
+						this.destPosRed = [-value, 0];
+					}
+				}
+				
+				this.animationCounter = 0;
+				this.doUpdate(callback);
+			}
+		}
+		return 0;
+	}
+
+	moveDown(moveValue, moveRed = 0, callback = null) {
+		if(this.animationStarted == false) {
+			var value = moveValue;
+			if (!isNaN(value)) {
+				this.animationStarted = true;
+
+				if(moveRed == 0){
+					this.destPos = [value, 0];
+					this.destPosRed = [-value, 0];
+
+					this.stopNextPos[0] += parseInt(value);
+				}
+				else{
+					if(value > max_red_offset - this.posRed[0]){
+						value = value - (max_red_offset - this.posRed[0]);
+						this.destPosRed = [(max_red_offset - this.posRed[0]), 0];
+						this.destPos = [value, 0];
+					}else{
+						this.destPosRed = [value, 0];
+					}
 				}
 
 				this.animationCounter = 0;
@@ -189,18 +265,26 @@ class Display {
 		return 0;
 	}
 
-	moveLeft(moveValue, callback = null){
+	moveLeft(moveValue, moveRed = 0, callback = null){
 		if(this.animationStarted == false) {
 			var value = moveValue;
 			if (!isNaN(value)) {
 				this.animationStarted = true;
-				
-				if(value > max_red_offset + this.posRed[1]){
-					value = value - (max_red_offset + this.posRed[1]);
-					this.destPosRed = [0, -(max_red_offset + this.posRed[1])];
+
+				if(moveRed == 0){
 					this.destPos = [0, -value];
-				}else{
-					this.destPosRed = [0, -value];
+					this.destPosRed = [0, value];
+					
+					this.stopNextPos[1] += parseInt(-value);
+				}
+				else{
+					if(value > max_red_offset + this.posRed[1]){
+						value = value - (max_red_offset + this.posRed[1]);
+						this.destPosRed = [0, -(max_red_offset + this.posRed[1])];
+						this.destPos = [0, -value];
+					}else{
+						this.destPosRed += [0, -value];
+					}
 				}
 				
 				this.animationCounter = 0;
@@ -210,20 +294,28 @@ class Display {
 		return 0;
 	}
 
-	moveRight(moveValue, callback = null){
+	moveRight(moveValue, moveRed = 0, callback = null){
 		if(this.animationStarted == false) {
 			var value = moveValue;
 			if (!isNaN(value)) {
 				this.animationStarted = true;
-				
-				if(value > max_red_offset - this.posRed[1]){
-					value = value - (max_red_offset - this.posRed[1]);
-					this.destPosRed = [0, (max_red_offset - this.posRed[1])];
-					this.destPos = [0, value];
-				}else{
-					this.destPosRed = [0, value];
-				}
 
+				if(moveRed == 0){
+					this.destPos = [0, value];
+					this.destPosRed = [0, -value];
+					
+					this.stopNextPos[1] += parseInt(value);
+				}
+				else{
+					if(value > max_red_offset - this.posRed[1]){
+						value = value - (max_red_offset - this.posRed[1]);
+						this.destPosRed = [0, (max_red_offset - this.posRed[1])];
+						this.destPos = [0, value];
+					}else{
+						this.destPosRed = [0, value];
+					}
+				}
+				
 				this.animationCounter = 0;
 				this.doUpdate(callback);
 			}
