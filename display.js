@@ -33,12 +33,17 @@ class Display {
 		this.state = newState;
 		this.doUpdate();
 	}
+	changeChar(newChar) {
+		this.dataArray[this.pos[0] + this.posRed[0]][this.pos[1] + this.posRed[1]] = newChar;
+		this.doUpdate();
+	}
 
 	insertData(){
 		this.editMode = false;
 		if(this.animationStarted == false) {
 			this.pos = [0, 0];
 			this.posRed = [0, 0];
+			this.state = 0;
 			
 			var regex = /[A-Za-z]+/g;
 			var text = document.getElementById('inputData').value;
@@ -56,17 +61,17 @@ class Display {
 		}
 	}
 
-	makeMove(direction, value) {
+	makeMove(direction, value, callback = null) {
 		this.editMode = false;
 		switch (direction) {
 			case Direction.UP:
-				this.moveUp(value);
+				this.moveUp(value, callback);
 			case Direction.DOWN:
-				this.moveDown(value);
+				this.moveDown(value, callback);
 			case Direction.LEFT:
-				this.moveLeft(value);
+				this.moveLeft(value, callback);
 			case Direction.RIGHT:
-				this.moveRight(value);
+				this.moveRight(value, callback);
 		}
 	}
 
@@ -111,7 +116,7 @@ class Display {
 
 	//private
 
-	moveUp(moveValue) {
+	moveUp(moveValue, callback = null) {
 		if(this.animationStarted == false) {
 			var value = moveValue;
 			if (!isNaN(value)) {
@@ -126,13 +131,13 @@ class Display {
 				}
 				
 				this.animationCounter = 0;
-				this.doUpdate();
+				this.doUpdate(callback);
 			}
 		}
 		return 0;
 	}
 
-	moveDown(moveValue) {
+	moveDown(moveValue, callback = null) {
 		if(this.animationStarted == false) {
 			var value = moveValue;
 			if (!isNaN(value)) {
@@ -147,13 +152,13 @@ class Display {
 				}
 
 				this.animationCounter = 0;
-				this.doUpdate();
+				this.doUpdate(callback);
 			}
 		}
 		return 0;
 	}
 
-	moveLeft(moveValue){
+	moveLeft(moveValue, callback = null){
 		if(this.animationStarted == false) {
 			var value = moveValue;
 			if (!isNaN(value)) {
@@ -168,13 +173,13 @@ class Display {
 				}
 				
 				this.animationCounter = 0;
-				this.doUpdate();
+				this.doUpdate(callback);
 			}
 		}
 		return 0;
 	}
 
-	moveRight(moveValue){
+	moveRight(moveValue, callback = null){
 		if(this.animationStarted == false) {
 			var value = moveValue;
 			if (!isNaN(value)) {
@@ -189,13 +194,13 @@ class Display {
 				}
 
 				this.animationCounter = 0;
-				this.doUpdate();
+				this.doUpdate(callback);
 			}
 		}
 		return 0;
 	}
 
-	draw() {
+	draw(callback = null) {
 		var canvas = document.getElementById('canvas');
 		var max_width_pixel = canvas.width;
 		var max_height_pixel = canvas.height;
@@ -283,12 +288,17 @@ class Display {
 				this.posRed[1] = parseInt(this.posRed[1]) + parseInt(this.destPosRed[1]);
 				this.destPosRed = [0, 0];
 			}
-			this.doUpdate();
+			this.doUpdate(callback);
+		}
+		else{
+			if(callback != null){
+				callback.startTuring();
+			}
 		}
 	}
 
-	doUpdate() {
-		window.requestAnimationFrame(()=>this.draw());
+	doUpdate(callback = null) {
+		window.requestAnimationFrame(()=>this.draw(callback));
 	}
 
 }

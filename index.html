@@ -5,35 +5,38 @@
 </head>
 <body>
 <script type="text/javascript" src="display.js"></script>
+<script type="text/javascript" src="turing.js"></script>
 <script>
-    let display = new Display();
+    let turing = new Turing();
 </script>
 
 <h2>Insert Data<h2/>
 <textarea style="margin: 0px;height:150px;width:800px" id="inputData">Area Help Needed Immediately Andrzej Droprate Such a WORDDDDDDDDDOOOOOOOO</textarea>
 <br/>
-<button style="margin: 0px;height:20px;width:100px"  onclick="display.insertData()">Insert</button> 
+<button style="margin: 0px;height:20px;width:100px"  onclick="turing.display.insertData()">Insert</button> 
 <br/><br/>
 
 <h2>Main Turing Display</h2>
-<button style="margin: 0px;height:20px;width:100px" onclick="display.makeMove(Direction.UP, document.getElementById('moveUpAmount').value)">Up</button>
+<button style="margin: 0px;height:20px;width:100px" onclick="turing.display.makeMove(Direction.UP, document.getElementById('moveUpAmount').value)">Up</button>
 <textarea style="margin: 0px;height:20px;width:100px" id="moveUpAmount">10</textarea>
 <br/>
-<button style="margin: 0px;height:20px;width:100px" onclick="display.makeMove(Direction.DOWN, document.getElementById('moveDownAmount').value)">Down</button>
+<button style="margin: 0px;height:20px;width:100px" onclick="turing.display.makeMove(Direction.DOWN, document.getElementById('moveDownAmount').value)">Down</button>
 <textarea style="margin: 0px;height:20px;width:100px" id="moveDownAmount">10</textarea>
 <br/>
-<button style="margin: 0px;height:20px;width:100px" onclick="display.makeMove(Direction.LEFT, document.getElementById('moveLeftAmount').value)">Left</button>
+<button style="margin: 0px;height:20px;width:100px" onclick="turing.display.makeMove(Direction.LEFT, document.getElementById('moveLeftAmount').value)">Left</button>
 <textarea style="margin: 0px;height:20px;width:100px" id="moveLeftAmount">10</textarea>
 <br/>
-<button style="margin: 0px;height:20px;width:100px" onclick="display.makeMove(Direction.RIGHT, document.getElementById('moveRightAmount').value)">Right</button>
+<button style="margin: 0px;height:20px;width:100px" onclick="turing.display.makeMove(Direction.RIGHT, document.getElementById('moveRightAmount').value)">Right</button>
 <textarea style="margin: 0px;height:20px;width:100px" id="moveRightAmount">10</textarea>
+<button style="margin-left: 10px;height:20px;width:100px" onclick="turing.checkDataAndStart()">Start</button>
+<label style="margin-left: 10px;height:20px;width:100px" id="startErrorLabel"></label>
 <br/><br/>
 
 <canvas id="canvas" width="770" height="770"></canvas>
 <script>
 	var canvas = document.getElementById('canvas');
-	canvas.addEventListener('click', (event)=>display.canvasOnMouseClick(event), false);
-	document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), false);
+	canvas.addEventListener('click', (event)=>turing.display.canvasOnMouseClick(event), false);
+	document.addEventListener('keypress', (event)=>turing.display.canvasOnKeyDown(event), false);
 </script>
 </body>
 </html>
