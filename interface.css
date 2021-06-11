@@ -24,10 +24,20 @@ body{
 #inputData{
 	margin: 0px;
 	height:150px;
-	width:100%
+	width:95%
 }
 
-#inputButton,#startButton,
+#inputProgram{
+	margin: 0px;
+	height:150px;
+	width:95%
+}
+
+#outputCode{
+	margin: 0px;
+}
+
+#inputButton, #buttonCompile,
 #moveUpAmount,#moveDownButton,#moveLeftButton,#moveRightButton,
 #moveUpButton,#moveDownAmount,#moveLeftAmount,#moveRightAmount,
 #startErrorLabel{
@@ -40,33 +50,38 @@ body{
 	margin-left: 10px;
 }
 
-#animationLabel,#sliderLabel,#animationTimeLabel{
+#animationLabel,#sliderLabel,#animationTimeLabel, #startButton{
 	margin-left: 10px;
 	height:20px;
 	width:100px
 }
 #turingInterface{
-	margin: 0px;	
+	margin: 10px;	
 }
 #mainContainer{
-	max-width:1960px;
+	max-width:100%;
 	display:flex;
 	flex-wrap:wrap;
 	grid-template-columns: min-content 1fr;
 	grid-template-rows: 4fr 1fr;
 	grid-template-area: "display editor input status";
 	gap:5px;
-	background-color:red;
+	/*background-color:red;*/
 }
 #emulator{
-	background-color:blue;
+	/*background-color:blue;*/
 	resize:horizontal;
 	overflow: auto;
 	width:1000px;
+	margin-top: 25px;
 }
 #editor{
-	background-color:yellow;
+	/*background-color:yellow;*/
 }
+#turingCanvas{
+	margin-top: 10px;
+}
+
 #turingCanvas canvas{
 	width:100%;
 }

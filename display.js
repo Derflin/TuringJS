@@ -168,8 +168,8 @@ class Display {
 
 	canvasOnMouseClick(event) {
 		var canvas = document.getElementById('canvas');
-		var max_width_pixel = canvas.width;
-		var max_height_pixel = canvas.height;
+		var max_width_pixel = canvas.offsetWidth;
+		var max_height_pixel = canvas.offsetHeight;
 		var canvasLeft = canvas.offsetLeft + canvas.clientLeft;
 		var canvasTop = canvas.offsetTop + canvas.clientTop;
 		

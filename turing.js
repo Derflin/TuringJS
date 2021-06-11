@@ -144,13 +144,13 @@ class Turing {
                 var newState = this.transit[curState][curChar][0];
                 var newChar = this.transit[curState][curChar][1];
                 var move = this.transit[curState][curChar][2];
-        
+
                 //aktualizacja stanu i litery
                 display.changeState(newState);
                 display.changeChar(newChar);
     
                 setTimeout(() => { //czekanie 1s przed ruchem
-                    if(move[0] == 0 && move[1] == 0){ //zabezpieczenie przed zmianą stanu/litery bez poruszenia się
+                    if((move.length == 2 && move[0] == 0 && move[1] == 0) || (move.length == 1 && move[0] == 0)){ //zabezpieczenie przed zmianą stanu/litery bez poruszenia się
                         display.makeMove(Direction.RIGHT, 0, this);
                     }
                     else{

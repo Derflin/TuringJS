@@ -134,9 +134,39 @@ function compile(){
 	let program=document.getElementById("inputProgram").value;
 	try{
 		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
-		document.getElementById("outputCode").textContent=code;
+		//document.getElementById("outputCode").textContent=code;
+		showOutputCode(code);
 		turing.changeTransit(code);
 	}catch(e){
 		document.getElementById("outputCode").textContent=e;
+	}
+}
+
+//--------------------------
+//show code existing rules
+function showOutputCode(code){
+	let outputArea = document.getElementById("outputCode");
+	outputArea.textContent = "";
+	for(i = 0; i < code.length; i++){
+		for(j = 0; j< code[i].length; j++){
+			if(code[i][j] != undefined){
+				var startLetter = String.fromCharCode(j); // zamiana int na char dla aktualnej litery
+				var endLetter = code[i][j][1];  // odczytanie litery docelowej
+				var endCharCode = endLetter.charCodeAt(0); // odczytanie kodu litery docelowej
+				var move = code[i][j][2]; // odczytanie tablicy ruchu
+
+				if(j < 65 || j > 122){ // w przypadku, gdy j nie jest literą, wyświetl int
+					startLetter = j;
+				}
+				if(endCharCode < 65 || endCharCode > 122){ // w przypadku, gdy code[i][j][1] nie jest literą, wyświetl int
+					endLetter = endCharCode;
+				}
+				if(move.length == 1){ // w przypadku, gdy tablica ruchu jest jednoelementowa, dodaj element (estetyczne)
+					move[1] = 0;
+				}
+
+				outputArea.textContent += '(' + startLetter + ',' + i + " => " + endLetter + ',' + code[i][j][0] + ",[" + move + '])' + '\r\n';
+			}
+		}
 	}
 }
