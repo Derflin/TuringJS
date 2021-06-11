@@ -1,3 +1,175 @@
+let binops=[];
+{
+let operators=["**","*","/","%","+","-","*",">>","<<","&","|","^"];
+let types=["integer","set"];
+let funformat={/* sign + is replaced by other operators*/
+	integer:{
+		integer:"(a,b)=>a+b",
+		set:"(a,b)=>new Set([...b].map((b)=>a+b))"
+	},
+	set:{
+		integer:"(a,b)=>new Set([...a].map((a)=>a+b))",
+		set:"(a,b)=>new Set([...a].map((a)=>[...b].map((b)=>a+b)).flat())"
+	}
+}
+for(let op of operators){
+	binops[op]={}
+	for(let arg1 of types){
+		binops[op][arg1]={}
+		for(let arg2 of types){
+			let f=eval(funformat[arg1][arg2].replaceAll('+',op));//safety because user have no access to funformat and operators
+			f.name=op;
+			binops[op][arg1][arg2]=f;
+		}
+	}
+}
+}
+let monops=[];
+{
+let operators=["-","~","!"];
+let types=["integer","set"];
+let funformat={/* sign + is replaced by other operators*/
+	prefix:{
+		integer:"(a)=>+a",
+		set:"(a)=>new Set([...a].map((a)=>+a))"
+	},
+	postfix:{
+		integer:"(a)=>a+",
+		set:"(a)=>new Set([...a].map((a)=>a+))"
+	}
+}
+for(let op of operators){
+	monops[op]={}
+	for(let pos of ["prefix"]){
+		monops[op][pos]={}
+		for(let arg of types){
+			let f=eval(funformat[pos][arg].replaceAll('+',op));//safety because user have no access to funformat and operators
+			f.name=op;
+			monops[op][pos][arg]=f;
+		}
+	}
+}
+}
+
+
+class binop{
+	constructor(op,arg1,arg2){
+		this.arg1=arg1;
+		this.arg2=arg2;
+		this.op=op;
+	}
+	stringify(h=0){
+		return [
+			" ".repeat(h)+this.op,
+			this.arg1.stringify(h+1),
+			this.arg2.stringify(h+1),
+		].join('\n');
+		
+	}
+	calc(symbols){
+		return this.f(this.arg1.calc(symbols),this.arg2.calc(symbols));
+	}
+	typing(symbols){
+		let type1=this.arg1.typing(symbols);
+		let type2=this.arg2.typing(symbols);
+		this.f=binops[this.op][type1][type2];
+		if(type1=="integer"&&type2=="integer"){
+			return "integer";
+		}else if((type1=="set"||type2=="set")||(type1=="integer"||type2=="integer")){//if both are set or one is set and another is integer
+			return "set";
+		}
+		throw "wrong type for "+op+".";
+	}
+}
+class monop{
+	constructor(op,pos,arg){
+		this.arg=arg;
+		this.op=op;
+		this.pos=pos;
+	}
+	stringify(h=0){
+		return [
+			" ".repeat(h)+this.op,
+			this.arg.stringify(h+1),
+		].join('\n');
+		
+	}
+	calc(symbols){
+		return this.f(this.arg.calc(symbols));
+	}
+	typing(symbols){
+		let type=this.arg.typing(symbols);
+		this.f=monops[this.op][this.pos][type];
+		if(type=="integer"){
+			return "integer";
+		}else if(type=="set"){//if both are set or one is set and another is integer
+			return "set";
+		}
+		throw "wrong type for "+op+".";
+	}
+}
+class union{
+	constructor(args){
+		this.args=args
+	}
+	
+	calc(symbols){
+		return new Set(this.args.map((v)=>v.calc(symbols)).flat())
+	}
+	toString(){
+		return "union {"+this.args+'}';
+	}
+	stringify(h=0){
+		return [
+			" ".repeat(h)+"union\n"+
+			this.args.map((a)=>a.stringify(h+1)).join('\n')
+		].join('\n');
+		
+	}
+	typing(symbols){
+		this.args.forEach((a,i)=>{
+			if(a.typing(symbols)=="set"){
+				this.args[i]=new func((a)=>[...a],[a]);
+			}
+		});
+		return "set";
+	}
+}
+class range{
+	constructor(first,last){
+		this.first=first
+		this.last=last
+	}
+	typing(symbols){
+		if (this.first.typing(symbols)!="integer")
+			throw "wrong range first argumen";
+		if (this.last.typing(symbols)!="integer")
+			throw "wrong range last argumen";
+		return "set";
+	}
+	
+	calc(symbols){
+		let first=this.first.calc(symbols);
+		let last=this.last.calc(symbols);
+		return new Set(Array(Number(last-first+1n))
+			.fill()
+			.map((_,n)=>
+				first+BigInt(n)
+			));
+	}
+	toString(){
+		return "range <"+this.first+','+this.last+'>';
+	}
+	stringify(h=0){
+		return [
+			" ".repeat(h)+"range\n",
+			this.first.stringify(h+1),
+			this.last.stringify(h+1)
+		].join('\n');
+		
+	}
+}
+
 class AST{
 	constructor(symbols,states,chars,dirs){
 		this.symbols=symbols;
@@ -21,26 +193,12 @@ class AST{
 			this.rules.map((r)=>r.stringify(h+1)).join('\n')
 		].join('\n');
 	}
-	iterator=class{
-		constructor(ast){
-			this.rules=ast.rules;
-			this.symbols=ast.symbols;
-			this.currRule=0;
-			this.iterator=this.rules[this.currRule].getIterator(this.symbols);
-		}
-		getRule(/*symbols*/){
-			do{
-				let rule = this.iterator.getRule();
-				if(rule==null){
-					this.currRule++;
-					if(this.currRule>=this.rules.length){
-						return null;
-					}
-					this.iterator=this.rules[this.currRule].getIterator(this.symbols);
-				}else{
-					return rule;
-				}
-			}while(true);
+	typing(){
+		this.rules.forEach((r)=>r.typing(this.symbols));
+	}
+	*getGenerator(){
+		for(let rule of this.rules){
+			yield* rule.getGenerator(this.symbols);
 		}
 	}
 }
@@ -54,6 +212,9 @@ class identifier{
 	stringify(h=0){
 		return " ".repeat(h)+this.name;
 	}
+	typing(symbols){
+		return symbols.get(this.name).type;
+	}
 }
 
 class integer{
@@ -64,7 +225,24 @@ class integer{
 		return this.value;
 	}
 	stringify(h=0){
-		return " ".repeat(h)+this.value;
+		return " ".repeat(h)+this.value
+	}
+	typing(symbols){
+		return "integer";
+	}
+}
+class set{
+	constructor(value){
+		this.value=new Set(value);
+	}
+	calc(){
+		return this.value;
+	}
+	stringify(h=0){;
+		return " ".repeat(h)+[...this.value.keys()].join(',');
+	}
+	typing(symbols){
+		return "set";
 	}
 }
 
@@ -88,14 +266,38 @@ class func{
 		].join('\n');
 		
 	}
+	typing(symbols){
+		this.args.forEach((a)=>a.typing(symbols));
+		return "integer";
+	}
 }
 
-class expression{
-	constructor(init){
-		this.value=init;
+class condition{
+	constructor(name,condition){
+		this.name=name;
+		this.condition=condition;
 	}
-	
+	calc(symbols){
+		return {
+			name:this.name,
+			value:this.condition.calc(symbols)
+		};
+	}
+	stringify(h=0){
+		return [
+			" ".repeat(h)+name+'=',
+			this.condition.stringify(h+1)
+		].join('\n');
+		
+	}
+	typing(symbols){
+		if(this.condition.typing(symbols)=="integer"){
+			this.condition=new union([this.condition]);
+		}
+		return "integer";
+	}
 }
+
 
 class move{
 	constructor(directions,steps){
@@ -116,6 +318,20 @@ class move{
 		}
 		return str.join('\n');
 	}
+	typing(symbols){
+		this.directions.forEach((d)=>{
+			let t=d.typing(symbols);
+			if(t!="integer" && t!="set"){
+				throw "bad direction";
+			}
+		});
+		this.directions.forEach((d)=>{
+			let t=d.typing(symbols);
+			if(t!="integer"){
+				throw "bad direction";
+			}
+		});
+	}
 }
 class rule{
 	constructor(currstate,currchar,newstate,newchar,move){
@@ -125,6 +341,7 @@ class rule{
 		this.newchar=newchar;
 		this.move=move;
 	}
+	/*
 	get value(){
 		let rules=[];
 		while(true){
@@ -135,59 +352,61 @@ class rule{
 		}
 		return rules;
 	}
+	*/
 	toString(){
 		return ['(',this.currchar,',',this.currstate,')=>(',this.newchar,',',this.newstate,')',this.move].join('');
 	}
 	stringify(h=0){
 		return[
 			' '.repeat(h)+'(',
-			this.currchar.stringify(h+1),
-			' '.repeat(h)+',',
 			this.currstate.stringify(h+1),
-			' '.repeat(h)+')=>(',
-			this.newchar.stringify(h+1),
 			' '.repeat(h)+',',
+			this.currchar.stringify(h+1),
+			' '.repeat(h)+')=>(',
 			this.newstate.stringify(h+1),
+			' '.repeat(h)+',',
+			this.newchar.stringify(h+1),
 			' '.repeat(h)+')',
 			this.move.stringify(h+1)
 		].join('\n')
 	}
-	iterator=class {
-		constructor(rule,symbols){
-			this.chars=[rule.currchar.calc(symbols)];
-			this.states=[rule.currstate.calc(symbols)];
-			
-			this.newchars=rule.newchar;
-			this.newstates=rule.newstate;
-			this.moves=rule.move;
-			
-			this.currChar=0;
-			this.currState=0;
-			
-			this.symbols=symbols;
+	typing(symbols){
+		symbols.set(this.currchar.name,{
+			type:"integer"
+		}).set(this.currstate.name,{
+			type:"integer"
+		});
+		if(this.currstate.typing(symbols)=="integer"){
+			//this.currstate=new union([this.currstate]);
 		}
-		getRule(/*symbols*/){
-			let ret= {
-				chr:this.chars[this.currChar],
-				state:this.states[this.currState],
-				newchar:this.newchars.calc(this.symbols),
-				newstate:this.newstates.calc(this.symbols),
-				move:this.moves.calc(this.symbols)
-			}
-			if(this.currChar>=this.chars.length){
-				this.currChar=0;
-				this.currState++;
-				if(this.currState>=this.states.length){
-					return null;
-				}
-			}else{
-				this.currChar++;
-			}
-			return ret;
+		if(this.currchar.typing(symbols)=="integer"){
+			//this.currchar=new union([this.currchar]);
 		}
+		if(this.newstate.typing(symbols)!="integer"){
+			throw "invalid type of new state in "+this.stringify();
+		}
+		if(this.newchar.typing(symbols)!="integer"){
+			throw "invalid type of new char in "+this.stringify();
+		}
+		this.move.typing(symbols)
 	}
-	getIterator(symbols){
-		return new this.iterator(this,symbols);
+	*getGenerator(symbols){
+		let chars=this.currchar.calc(symbols)
+		for(let chr of chars.value){
+			symbols.get(chars.name).value=chr;
+			let states=this.currstate.calc(symbols)
+			for(let state of states.value){
+				symbols.get(states.name).value=state;
+				yield {
+					chr:chr,
+					state:state,
+					newchar:this.newchar.calc(symbols),
+					newstate:this.newstate.calc(symbols),
+					move:this.move.calc(symbols)					
+				}
+			}
+		}
+	
 	}
 }
 

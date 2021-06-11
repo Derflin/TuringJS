@@ -101,13 +101,48 @@ class lexer{
 					return this.createToken('/');
 				}
 			break;
+			case'*'://operators * **
+				this.next();
+				switch(this.curr){
+					case'*':
+						this.next();
+						return this.createToken("**");
+					default:
+						return this.createToken("*");
+				}
+			break;
+			case'<'://operator <<,open range
+				this.next()
+				switch(this.curr){
+					case'<':
+						this.next();
+						return this.createToken("<<");
+					default:
+						return this.createToken("<");//for parser error mesage
+				}
+			case'>'://operator >>, close range
+				this.next()
+				switch(this.curr){
+					case'>':
+						this.next();
+						return this.createToken(">>");
+					default:
+						return this.createToken(">");//for parser error mesage
+				}
+			break;
 			case'(':
 			case')':
+			case'{':
+			case'}':
 			case',':
 			case'+'://operator or direction
 			case'-'://operator or direction
-			case'*'://operator
 			case'%'://operator
+			case'!'://operator
+			case'~'://operator
+			case'&'://operator
+			case'|'://operator
+			case'^'://operator
 				return this.match(this.curr);
 			break;
 			case'='://=>
@@ -141,7 +176,7 @@ class lexer{
 			default:
 			//identifier test
 				let ch=this.curr.toLowerCase()
-				if('a'<=ch && ch<='z')
+				if('a'<=ch && ch<='z'||ch=='@')
 					return this.identifier();
 				else{
 					let token=this.createToken("error",this.error());
@@ -155,7 +190,7 @@ class lexer{
 		let value=this.curr;
 		let read=true;
 		let ch=this.curr.toLowerCase()
-		if(!('a'<=ch && ch<='z')){
+		if(!('a'<=ch && ch<='z'||ch=='@')){
 			return this.createToken("error",error());
 		}
 		while(read){
@@ -173,7 +208,7 @@ class lexer{
 	}
 	
 	integer(){
-		let value=0;
+		let value=0n;
 		let read=true;
 		while(read){
 			switch(this.curr){
@@ -187,7 +222,7 @@ class lexer{
 			case'7':
 			case'8':
 			case'9':
-				value=value*10+(this.curr-'0');
+				value=value*10n+BigInt(this.curr-'0');
 				this.next();
 			break;
 			case'_':
@@ -203,7 +238,7 @@ class lexer{
 		if(!this.match("'")){
 			return this.createToken("error",this.error());
 		}
-		let value=this.curr.charCodeAt(0);
+		let value=BigInt(this.curr.charCodeAt(0));
 		this.next();
 		if(!this.match("'")){
 			return this.createToken("error",this.error());

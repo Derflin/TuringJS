@@ -96,7 +96,7 @@ button.onclick = function() {
 }
 //-----------------------
 
-var interface = document.getElementById('turingInterface');
+var interface = document.getElementById('mainContainer');
 
 document.addEventListener('click', (event)=>display.canvasFocus(event), false);
 document.addEventListener("keydown", function(e) {
@@ -134,7 +134,7 @@ function compile(){
 	let program=document.getElementById("inputProgram").value;
 	try{
 		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
-		document.getElementById("outputCode").textContent=JSON.stringify(code)	;
+		document.getElementById("outputCode").textContent=code;
 		turing.changeTransit(code);
 	}catch(e){
 		document.getElementById("outputCode").textContent=e;
