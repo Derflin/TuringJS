@@ -116,9 +116,14 @@ class Display {
 			var value = moveValue;
 			if (!isNaN(value)) {
 				this.animationStarted = true;
-				this.destPos = [-value, 0];
-				this.destPosRed = [value, 0];
-			
+				
+				if(value > max_red_offset + this.posRed[0]){
+					value = value - (max_red_offset + this.posRed[0]);
+					this.destPosRed = [-(max_red_offset + this.posRed[0]), 0];
+					this.destPos = [-value, 0];
+				}else{
+					this.destPosRed = [-value, 0];
+				}
 				
 				this.animationCounter = 0;
 				this.doUpdate();
@@ -132,8 +137,14 @@ class Display {
 			var value = moveValue;
 			if (!isNaN(value)) {
 				this.animationStarted = true;
-				this.destPos = [value, 0];
-				this.destPosRed = [-value, 0];
+				
+				if(value > max_red_offset - this.posRed[0]){
+					value = value - (max_red_offset - this.posRed[0]);
+					this.destPosRed = [(max_red_offset - this.posRed[0]), 0];
+					this.destPos = [value, 0];
+				}else{
+					this.destPosRed = [value, 0];
+				}
 
 				this.animationCounter = 0;
 				this.doUpdate();
@@ -147,8 +158,14 @@ class Display {
 			var value = moveValue;
 			if (!isNaN(value)) {
 				this.animationStarted = true;
-				this.destPos = [0, -value];
-				this.destPosRed = [0, value];
+				
+				if(value > max_red_offset + this.posRed[1]){
+					value = value - (max_red_offset + this.posRed[1]);
+					this.destPosRed = [0, -(max_red_offset + this.posRed[1])];
+					this.destPos = [0, -value];
+				}else{
+					this.destPosRed = [0, -value];
+				}
 				
 				this.animationCounter = 0;
 				this.doUpdate();
@@ -162,8 +179,14 @@ class Display {
 			var value = moveValue;
 			if (!isNaN(value)) {
 				this.animationStarted = true;
-				this.destPos = [0, value];
-				this.destPosRed = [0, -value];
+				
+				if(value > max_red_offset - this.posRed[1]){
+					value = value - (max_red_offset - this.posRed[1]);
+					this.destPosRed = [0, (max_red_offset - this.posRed[1])];
+					this.destPos = [0, value];
+				}else{
+					this.destPosRed = [0, value];
+				}
 
 				this.animationCounter = 0;
 				this.doUpdate();
