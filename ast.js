@@ -303,6 +303,16 @@ class move{
 	constructor(directions,steps){
 		this.directions=directions;
 		this.steps=steps;
+		let pinchdirections= directions.map((d)=>{
+			if(d instanceof identifier){
+				return d.name
+			}
+		});
+		pinchdirections.forEach((d,i)=>{
+			if(pinchdirections.indexOf(d,i+1)>=0){
+				throw "duplicated dimension";
+			}
+		});
 	}
 	calc(symbols){
 		let ret=new Array(symbols.get("directions").value).fill(0);

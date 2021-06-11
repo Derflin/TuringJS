@@ -66,17 +66,17 @@ body{
 	grid-template-rows: 4fr 1fr;
 	grid-template-area: "display editor input status";
 	gap:5px;
-	/*background-color:red;*/
+	/*background-color:gray;*/
 }
 #emulator{
-	/*background-color:blue;*/
+	/*background-color:lightgray;*/
 	resize:horizontal;
 	overflow: auto;
 	width:1000px;
 	margin-top: 25px;
 }
 #editor{
-	/*background-color:yellow;*/
+	/*background-color:darkgray;*/
 }
 #turingCanvas{
 	margin-top: 10px;

@@ -170,10 +170,50 @@ class parser{
 		if(this.curr[0]=="identifier"){
 			let dim=this.curr[1];
 			this.next();
-			return new move([new identifier(dim)],[new integer(step)])
+			let directions=[],steps=[];
+			switch(this.curr[0]){
+				case'+':
+				case'-':
+					[directions,steps]=this.secondmove();
+			}
+			directions.push(new identifier(dim));
+			steps.push(new integer(step));
+			return new move(directions,steps);
 		}else{
 			return new move([new integer(0)],[new integer(step)])
-			
+		}
+	}
+	secondmove(){
+		let step
+		switch(this.curr[0]){
+		case'+':
+			step=1n;
+			break;
+		case'-':
+			step=-1n;
+			break;
+		default:
+			throw this.error();
+		}
+		this.next();
+		if(this.curr[0]=="integer"){
+			step*=this.curr[1];
+			this.next();
+		}
+		if(this.curr[0]=="identifier"){
+			let dim=this.curr[1];
+			this.next();
+			let directions=[],steps=[];
+			switch(this.curr[0]){
+				case'+':
+				case'-':
+					[directions,steps]=this.secondmove();
+			}
+			directions.push(new identifier(dim));
+			steps.push(new integer(step));
+			return [directions,steps];
+		}else{
+			throw this.error()
 		}
 	}
 	
