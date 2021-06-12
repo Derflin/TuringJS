@@ -14,16 +14,16 @@ class parser{
 		this.ahead.shift();
 		this.ahead.push(this.lexer.getToken());
 	}
-	test(type,value){//require to given arguments fit
+	test(type,value){
 		if(type==this.curr[0] && (value==this.curr[1] || value==null || value==undefined)){
 			let ret=this.curr[1]
 			this.next();
 			return ret;
 		}else{
-			this.throwUnexpectedToken([type])
+			throw this.error();
 		}
 	}
-	match(type,value){//if type is fit return value
+	match(type,value){
 		if(type!=this.curr[0]){
 			return false;
 		}else if(value==this.curr[1]){
@@ -36,7 +36,7 @@ class parser{
 			return false;
 		}
 	}
-	pinch(type,def){//if type fit return value, else default
+	pinch(type,def){
 		if(type!=this.curr[0]){
 			return def;
 		}else{
@@ -49,10 +49,6 @@ class parser{
 			message="Unexpected token: "+this.curr[0];
 		return pos+message;
 	}
-	throwUnexpectedToken(expects){
-		throw new unexpectedTokenError(this.curr,expects);
-	}
-	
 	createRule(currState,currChar,newState,newChar,motion){
 		return [currState,currChar,newState,newChar,motion];
 	}
@@ -65,7 +61,6 @@ class parser{
 			rule=this.rule()
 			ast.add(rule);
 		}
-		this.test("eof");
 		return [ast,undefined];
 	}
 	definitions(){
