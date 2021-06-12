@@ -179,7 +179,9 @@ class Turing {
                 document.getElementById('startButton').innerHTML = "Start";
                 this.enableElements();
             }
-           
+        }
+        else{
+            continueEnableButtons();
         }
     }
 }
