@@ -63,8 +63,8 @@ body{
 	margin: 0px;
 	height: 138px;
 	width: 95%;
-	overflow: auto;
-	white-space: pre;
+	overflow: scroll;
+	white-space: pre-wrap;
 }
 
 #inputButton, #buttonCompile,

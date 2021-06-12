@@ -174,26 +174,13 @@ function compile(){
 //show code existing rules
 function showOutputCode(code){
 	let outputArea = document.getElementById("outputCode");
-	var enterCounter = 1;
 	outputArea.innerHTML = "";
-	for(i = 0; i < code.length; i++){
-		if(code[i]!=undefined){
-			for(j = 0; j< code[i].length; j++){
-				if(code[i][j] != undefined){
-					outputArea.innerHTML += printActualRule(code[i][j], i, j);
 
-					if(enterCounter == numOfColCode){
-						enterCounter = 1;
-						outputArea.innerHTML += '\r\n';
-					}
-					else{
-						outputArea.innerHTML += "	";
-						enterCounter++;
-					}
-				}
-			}
-		}
-	}
+	code.forEach((first, i) => {
+		first.forEach((second, j) => {
+			outputArea.innerHTML += printActualRule(second, i, j) + '	';
+		});
+	});
 }
 
 function printActualRule(ruleSet, curState, curChar){
@@ -212,7 +199,7 @@ function printActualRule(ruleSet, curState, curChar){
 		move[1] = 0;
 	}
 
-	return '(' + startLetter + ',' + curState + " => " + endLetter + ',' + ruleSet[0] + ",[" + move + '])';
+	return '(' + startLetter + ',' + curState + ")=>(" + endLetter + ',' + ruleSet[0] + ",[" + move + '])';
 }
 //go to error in input code
 function selectInputTextArea(element,start,end){
