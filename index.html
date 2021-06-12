@@ -94,10 +94,10 @@
 //jak dotrzesz do początku przejdź w stan 15 -> sprawdzenie, czy posortowano
 (@=0,14)=>(@,15)-x+y
 (@=0,15)=>(@,0)+x
-(@='*',15)=>(0,999)+x
+(@='*',15)=>(0,33)+x
 //stan końcowy
-(@=<'A','Z'>,999)=>(@,999)
-(@=<'a','z'>,999)=>(@,999)
+(@=<'A','Z'>,33)=>(@,33)
+(@=<'a','z'>,33)=>(@,33)
 
 //oznaczenie posortowania ostatniego elementu
 (@=<'A','Z'>,13)=>(@,13)-x
