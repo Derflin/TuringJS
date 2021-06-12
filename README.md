@@ -16,3 +16,5 @@
     * zmiana prezentacji sekcji Code
     * dodanie wyświetlania aktualnie przetwarzanej reguły
     * dodanie przycisku Reset wraz z jego funkcjonalnością
+    * aktualizacja przykładowego kodu
+    * drobne zmiany kosmetyczne
