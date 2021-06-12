@@ -20,59 +20,28 @@ body{
 	height: 20px;
 	background: #8588a0;
 }
-.loader {
-	border: 5px solid #f3f3f3;
-	border-radius: 50%;
-	border-top: 5px solid #0704aa;
-	width: 10px;
-	height: 10px;
-	-webkit-animation: spin 2s linear infinite; /* Safari */
-	animation: spin 2s linear infinite;
-	overflow: auto;
-  }
-  @keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-  }
-
-#compileLoader{
-	overflow: hidden;
-}
-#compileButtonDiv{
-	width: 110px;
-	float:left;
-}
-#loaderDiv{
-	margin-top: 5px;
-	overflow: hidden;
-}
 
 #inputData{
 	margin: 0px;
 	height:150px;
-	width:95%;
+	width:95%
 }
 
 #inputProgram{
 	margin: 0px;
 	height:150px;
-	width:95%;
+	width:95%
 }
 
 #outputCode{
 	margin: 0px;
-	height: 138px;
-	width: 95%;
-	overflow: auto;
-	white-space: pre;
 }
 
 #inputButton, #buttonCompile,
 #moveUpAmount,#moveDownButton,#moveLeftButton,#moveRightButton,
-#moveUpButton,#moveDownAmount,#moveLeftAmount,#moveRightAmount
-{
+#moveUpButton,#moveDownAmount,#moveLeftAmount,#moveRightAmount,
+#startErrorLabel{
 	margin: 0px;
-	margin-top: 5px;
 	height:20px;
 	width:100px
 }
@@ -81,17 +50,11 @@ body{
 	margin-left: 10px;
 }
 
-#animationLabel,#sliderLabel,#animationTimeLabel, #startButton, #resetButton
-{
+#animationLabel,#sliderLabel,#animationTimeLabel, #startButton{
 	margin-left: 10px;
 	height:20px;
-	width:100px;
+	width:100px
 }
-
-#startErrorDiv{
-	margin-left: 10px;
-}
-
 #turingInterface{
 	margin: 10px;	
 }
