@@ -158,6 +158,11 @@ function compile(){
 			showOutputCode(code);
 		}catch(e){
 			document.getElementById("outputCode").textContent=e;
+			if(e instanceof compilingError){
+				selectInputTextArea(document.getElementById("inputProgram"),e.start[2],e.end[2]);
+			}else{
+				throw e;
+			}
 		}
 		
 		document.getElementById("loaderDiv").setAttribute("hidden", true);
@@ -208,4 +213,19 @@ function printActualRule(ruleSet, curState, curChar){
 	}
 
 	return '(' + startLetter + ',' + curState + " => " + endLetter + ',' + ruleSet[0] + ",[" + move + '])';
+}
+//go to error in input code
+function selectInputTextArea(element,start,end){
+	if(element.setSelectionRange){
+		element.focus();
+		element.setSelectionRange(start,end);
+	}else if(element.createTextRange){
+		let range=element.createTextRange();
+		element.collapse(true);
+		element.moveEnd('character',start);
+		element.moveStart('character',end);
+		element.select();
+	}else{
+		throw "Unable to select text.";
+	}
 }
