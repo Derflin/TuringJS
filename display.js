@@ -83,6 +83,7 @@ class Display {
 				}
 			}
 
+			document.getElementById('startErrorLabel').innerHTML = "";
 			document.getElementById('startButton').innerHTML = "Start";
 			this.doUpdate();
 		}

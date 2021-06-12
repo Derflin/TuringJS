@@ -39,8 +39,8 @@ body{
 
 #inputButton, #buttonCompile,
 #moveUpAmount,#moveDownButton,#moveLeftButton,#moveRightButton,
-#moveUpButton,#moveDownAmount,#moveLeftAmount,#moveRightAmount,
-#startErrorLabel{
+#moveUpButton,#moveDownAmount,#moveLeftAmount,#moveRightAmount
+{
 	margin: 0px;
 	height:20px;
 	width:100px
@@ -50,7 +50,8 @@ body{
 	margin-left: 10px;
 }
 
-#animationLabel,#sliderLabel,#animationTimeLabel, #startButton{
+#animationLabel,#sliderLabel,#animationTimeLabel, #startButton, #resetButton,
+#startErrorLabel{
 	margin-left: 10px;
 	height:20px;
 	width:100px

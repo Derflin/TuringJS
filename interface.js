@@ -49,6 +49,7 @@ button.onclick = function() {
 				this.innerHTML = "Next Step";
 			}
 			step = 0;
+			document.getElementById('resetButton').removeAttribute('hidden');
 			turing.checkDataAndStart();
 			turing.enableMove();
 			break;
@@ -58,6 +59,8 @@ button.onclick = function() {
 			turing.enableMove();
 			document.getElementById('animationTime').removeAttribute('disabled');
 			document.getElementById('animationCheckBox').removeAttribute('disabled');
+			document.getElementById('resetButton').removeAttribute('disabled');
+			document.getElementById('buttonCompile').removeAttribute('disabled');
 			break;
 		case "Continue":
 			if(animationOn == true){

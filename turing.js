@@ -62,6 +62,8 @@ class Turing {
         document.getElementById('animationTime').setAttribute('disabled', true);
         document.getElementById('inputButton').setAttribute('disabled', true);
         document.getElementById('animationCheckBox').setAttribute('disabled', true);
+        document.getElementById('resetButton').setAttribute('disabled', true);
+        document.getElementById('buttonCompile').setAttribute('disabled', true);
         this.disableMove();
     }
 
@@ -70,6 +72,8 @@ class Turing {
         document.getElementById('inputButton').removeAttribute('disabled');
         document.getElementById('animationCheckBox').removeAttribute('disabled');
         document.getElementById('startButton').removeAttribute('disabled');
+        document.getElementById('resetButton').removeAttribute('disabled');
+        document.getElementById('buttonCompile').removeAttribute('disabled');
         this.enableMove();
     }
 
@@ -85,6 +89,23 @@ class Turing {
         document.getElementById('moveDownButton').removeAttribute('disabled');
         document.getElementById('moveLeftButton').removeAttribute('disabled');
         document.getElementById('moveRightButton').removeAttribute('disabled');
+    }
+
+    resetTuring(){
+        this.enableElements();
+        this.transit = [];
+        this.processing = false;
+        this.lastState = -1; 
+        this.lastChar = undefined; 
+        this.lastPos = [-1, -1]; 
+        this.step = 0;
+
+        document.getElementById('startErrorLabel').innerHTML = "Reseted Turing";
+        document.getElementById('startButton').innerHTML = "Start";
+        document.getElementById('resetButton').setAttribute('hidden', true);
+
+        display.resetRed();
+        showOutputCode(this.transit);
     }
 
     checkDataAndStart(){ //sprawdzenie, czy wprowadzono dane do sortowania i rozpoczęcie obliczeń
@@ -103,6 +124,8 @@ class Turing {
         else{
             document.getElementById('animationTime').removeAttribute('disabled');
             document.getElementById('animationCheckBox').removeAttribute('disabled');
+            document.getElementById('resetButton').removeAttribute('disabled');
+            document.getElementById('buttonCompile').removeAttribute('disabled');
 
             if(display.pos[0] != 0 || display.posRed[0] != 0 || display.pos[1] != 0 || display.posRed[1] != 0){
                 display.resetRed(this);
@@ -129,6 +152,7 @@ class Turing {
 
                 document.getElementById('startErrorLabel').innerHTML = "Sorting is done!";
                 document.getElementById('startButton').innerHTML = "Start";
+                document.getElementById('resetButton').setAttribute('hidden', true);
                 this.enableElements();
             }
         }
@@ -171,6 +195,7 @@ class Turing {
                 
                 document.getElementById('startErrorLabel').innerHTML = "There's no rule for current char nad state! Turing stopped working.";
                 document.getElementById('startButton').innerHTML = "Start";
+                document.getElementById('resetButton').setAttribute('hidden', true);
                 this.enableElements();
             }
            
