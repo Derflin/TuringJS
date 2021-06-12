@@ -1,25 +1,11 @@
-class token{
-	constructor(type,value,start,end){
-		[this[0],this[1]]=[type,value];	//to compability, remove lately
-		this.type=type;		
-		this.value=value;
-		this.start=start;
-		this.end=end;
-	}
-	toString(){
-		if(this.value==undefined){
-			return this.type.toString();
-		}else{
-			return this.type.toString()+":"+this.value.toString();
-		}
-	}
-}
 class lexer{
 	constructor(code){
 		this.code=code;
 		this.pos=0;
 		this.line=1;
 		this.column=1;
+		this.tokenLine=1;
+		this.tokenColumn=1;
 	}
 	
 	get curr(){
@@ -39,14 +25,6 @@ class lexer{
 			return false;
 		}
 	}
-	test(c){
-		if(this.curr==c){
-			this.next();
-			return true;
-		}else{
-			return false;
-		}
-	}
 	
 	error(message){
 		let pos_inf="("+this.line+","+this.column+")";
@@ -56,9 +34,6 @@ class lexer{
 	}
 	ok(message){
 		return (message==undefined)?"Succed lexical analize":message;
-	}
-	throwUnexpectedCharacter(expected){
-		throw new unexpectedCharacterError([this.line,this.column,this.pos],this.curr,expected);
 	}
 	/*
 	Token		value
@@ -80,11 +55,17 @@ class lexer{
 			
 	
  	*/
-	startToken(){
-		return this.starttoken=[this.line,this.column,this.pos];
-	}
 	createToken(type,value){
-		return new token(type,value,this.starttoken,this.startToken());
+		/*
+		if(value==null || value==undefined)
+			alert(type);
+		else
+			alert(type+": "+value);
+		//*/
+		
+		this.tokenLine=this.line;
+		this.tokenColumn=this.column-1;
+		return [type,value];
 	}
 	
 	getTokens(){
@@ -97,7 +78,6 @@ class lexer{
 		return tokens;
 	}
 	getToken(){
-		this.startToken();
 		do{
 			switch(this.curr){
 			//skip white characters
@@ -138,7 +118,7 @@ class lexer{
 						this.next();
 						return this.createToken("<<");
 					default:
-						return this.createToken("<");
+						return this.createToken("<");//for parser error mesage
 				}
 			case'>'://operator >>, close range
 				this.next()
@@ -147,7 +127,7 @@ class lexer{
 						this.next();
 						return this.createToken(">>");
 					default:
-						return this.createToken(">");
+						return this.createToken(">");//for parser error mesage
 				}
 			break;
 			case'(':
@@ -199,12 +179,9 @@ class lexer{
 				if('a'<=ch && ch<='z'||ch=='@')
 					return this.identifier();
 				else{
-					/*
 					let token=this.createToken("error",this.error());
 					this.next();
 					return token;
-					*/
-					this.throwUnexpectedCharacter();//no one token start with this character
 				}
 			}
 		}while(true);
@@ -214,7 +191,7 @@ class lexer{
 		let read=true;
 		let ch=this.curr.toLowerCase()
 		if(!('a'<=ch && ch<='z'||ch=='@')){
-			this.throwUnexpectedCharacter();//identifier have to start with letter or @
+			return this.createToken("error",error());
 		}
 		while(read){
 			this.next();
@@ -258,13 +235,13 @@ class lexer{
 		return this.createToken("integer",value);
 	}
 	character(){
-		if(!this.test("'")){
-			this.throwUnexpectedCharacter("'");
+		if(!this.match("'")){
+			return this.createToken("error",this.error());
 		}
 		let value=BigInt(this.curr.charCodeAt(0));
 		this.next();
-		if(!this.test("'")){
-			this.throwUnexpectedCharacter("'");
+		if(!this.match("'")){
+			return this.createToken("error",this.error());
 		}
 		return this.createToken("integer",value);
 	}
@@ -279,13 +256,10 @@ class lexer{
 			this.next();
 			start++;
 		}
-		let opened=this.createToken('\\'+'*'.repeat(start),start);
+		
 		do{
-			while(this.curr!='*'&&this.curr){
+			while(this.curr!='*'){
 				this.next();
-			}
-			if(!this.curr){
-				throw new unclosedError(opened,'*'.repeat(start)+'\\',"comment");
 			}
 			let end=0;
 			while(this.curr=='*'){

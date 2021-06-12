@@ -8,7 +8,6 @@
 
 	<script type="text/javascript" src="turing.js"></script>
 
-	<script type="text/javascript" src="exception.js"></script>
 	<script type="text/javascript" src="lexer.js"></script>
 	<script type="text/javascript" src="parser.js"></script>
 	<script type="text/javascript" src="ast.js"></script>
@@ -48,11 +47,14 @@
 					</div>
 					<div>
 						<label id="sliderLabel">Animation speed:</label>
-						<input style="" type="range" min="1" max="100" value="50" class="slider" id="animationTime" autocomplete="off">
+						<input id="animationTime" type="range" min="1" max="100" value="50" class="slider" autocomplete="off">
 						<label id="animationTimeLabel">100%</label>
 					</div>
 					<div>
 						<button id="startButton">Start</button>
+						<button id="resetButton" onclick="turing.resetTuring()" hidden="true">Reset</button>
+					</div>
+					<div id="startErrorDiv">
 						<label id="startErrorLabel"></label>
 					</div>
 				</div>
@@ -179,12 +181,9 @@
 			</div>
 			<div id="code">
 				<h2>Code</h2>
-				<code id="outputCode"></code>
+				<textarea id="outputCode" readonly></textarea>
 			</div>
 		</div>
-		
-		
-		
 	</div>
 	<script type="text/javascript" src="interface.js"></script>
 </body>
