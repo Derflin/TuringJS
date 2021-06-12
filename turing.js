@@ -198,7 +198,9 @@ class Turing {
                 document.getElementById('resetButton').setAttribute('hidden', true);
                 this.enableElements();
             }
-           
+        }
+        else{
+            continueEnableButtons();
         }
     }
 }

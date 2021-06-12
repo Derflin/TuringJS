@@ -57,12 +57,8 @@ button.onclick = function() {
 			break;
 		case "Stop":
 			this.innerHTML = "Continue";
+			this.setAttribute("disabled", true);
 			turing.changeProcessing();
-			turing.enableMove();
-			document.getElementById('animationTime').removeAttribute('disabled');
-			document.getElementById('animationCheckBox').removeAttribute('disabled');
-			document.getElementById('resetButton').removeAttribute('disabled');
-			document.getElementById('buttonCompile').removeAttribute('disabled');
 			break;
 		case "Continue":
 			if(animationOn == true){
@@ -96,6 +92,20 @@ button.onclick = function() {
 			else{
 				turing.startTuring();
 			}
+			break;
+	}
+}
+
+function continueEnableButtons(){
+	var button = document.getElementById('startButton');
+	switch(button.innerHTML){
+		case "Continue":
+			turing.enableMove();
+			document.getElementById('animationTime').removeAttribute('disabled');
+			document.getElementById('animationCheckBox').removeAttribute('disabled');
+			document.getElementById('resetButton').removeAttribute('disabled');
+			document.getElementById('buttonCompile').removeAttribute('disabled');
+			document.getElementById('startButton').removeAttribute('disabled');
 			break;
 	}
 }
