@@ -75,11 +75,16 @@
 				<h2>Prigram</h2>
 				<textarea id="inputProgram">(@=<'A','Z'>,0)=>(@-'A'+'a',0)+
 (@=<'a','z'>,0)=>(@-'a'+'A',0)+</textarea>
-				<button id="buttonCompile" onclick="compile()">Compile</button> 
+				<div id="compileLoader">
+					<div id="compileButtonDiv">
+						<button id="buttonCompile" onclick="compile()">Compile</button> 
+					</div>
+					<div id="loaderDiv" class="loader" hidden="true"></div>
+				</div>
 			</div>
 			<div id="code">
 				<h2>Code</h2>
-				<code id="outputCode"></code>
+				<textarea id="outputCode" readonly></textarea>
 			</div>
 		</div>
 		

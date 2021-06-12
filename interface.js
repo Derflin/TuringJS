@@ -1,3 +1,5 @@
+const numOfColCode = 4;
+
 //hidding animation speed slider
 var animCheckBox = document.getElementById('animationCheckBox');
 
@@ -135,20 +137,29 @@ document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), f
 //compiling code
 function compile(){
 	let program=document.getElementById("inputProgram").value;
+
+	document.getElementById("loaderDiv").removeAttribute("hidden");
+	turing.disableElements();
+
+	setTimeout(() => {
 	try{
 		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
 		turing.changeTransit(code);
 		showOutputCode(code);
+		document.getElementById("loaderDiv").setAttribute("hidden", true);
 	}catch(e){
 		document.getElementById("outputCode").textContent=e;
 	}
+	turing.enableElements();
+	}, 0);
 }
 
 //--------------------------
 //show code existing rules
 function showOutputCode(code){
 	let outputArea = document.getElementById("outputCode");
-	outputArea.textContent = "";
+	var enterCounter = 1;
+	outputArea.innerHTML = "";
 	for(i = 0; i < code.length; i++){
 		if(code[i]!=undefined){
 			for(j = 0; j< code[i].length; j++){
@@ -168,7 +179,16 @@ function showOutputCode(code){
 						move[1] = 0;
 					}
 
-					outputArea.textContent += '(' + startLetter + ',' + i + " => " + endLetter + ',' + code[i][j][0] + ",[" + move + '])' + '\r\n';
+					outputArea.innerHTML += '(' + startLetter + ',' + i + " => " + endLetter + ',' + code[i][j][0] + ",[" + move + '])';
+
+					if(enterCounter == numOfColCode){
+						enterCounter = 1;
+						outputArea.innerHTML += '\r\n';
+					}
+					else{
+						outputArea.innerHTML += "	";
+						enterCounter++;
+					}
 				}
 			}
 		}
