@@ -1,5 +1,3 @@
-const numOfColCode = 4;
-
 //hidding animation speed slider
 var animCheckBox = document.getElementById('animationCheckBox');
 
@@ -51,7 +49,6 @@ button.onclick = function() {
 				this.innerHTML = "Next Step";
 			}
 			step = 0;
-			document.getElementById('resetButton').removeAttribute('hidden');
 			turing.checkDataAndStart();
 			turing.enableMove();
 			break;
@@ -147,65 +144,62 @@ document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), f
 //compiling code
 function compile(){
 	let program=document.getElementById("inputProgram").value;
-
-	document.getElementById("loaderDiv").removeAttribute("hidden");
-	turing.disableElements();
-
-	setTimeout(() => {
-		try{
-			let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
-			turing.changeTransit(code);
-			showOutputCode(code);
-		}catch(e){
-			document.getElementById("outputCode").textContent=e;
+	try{
+		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
+		turing.changeTransit(code);
+		showOutputCode(code);
+	}catch(e){
+		document.getElementById("outputCode").textContent=e;
+		if(e instanceof compilingError){
+			selectInputTextArea(document.getElementById("inputProgram"),e.start[2],e.end[2]);
+		}else{
+			throw e;
 		}
-		
-		document.getElementById("loaderDiv").setAttribute("hidden", true);
-		turing.enableElements();
-	}, 0);
+	}
 }
 
 //--------------------------
 //show code existing rules
 function showOutputCode(code){
 	let outputArea = document.getElementById("outputCode");
-	var enterCounter = 1;
-	outputArea.innerHTML = "";
+	outputArea.textContent = "";
 	for(i = 0; i < code.length; i++){
 		if(code[i]!=undefined){
 			for(j = 0; j< code[i].length; j++){
 				if(code[i][j] != undefined){
-					outputArea.innerHTML += printActualRule(code[i][j], i, j);
+					var startLetter = String.fromCharCode(j); // zamiana int na char dla aktualnej litery
+					var endLetter = code[i][j][1];  // odczytanie litery docelowej
+					var endCharCode = endLetter.charCodeAt(0); // odczytanie kodu litery docelowej
+					var move = code[i][j][2]; // odczytanie tablicy ruchu
 
-					if(enterCounter == numOfColCode){
-						enterCounter = 1;
-						outputArea.innerHTML += '\r\n';
+					if(j < 65 || j > 122){ // w przypadku, gdy j nie jest literą, wyświetl int
+						startLetter = j;
 					}
-					else{
-						outputArea.innerHTML += "	";
-						enterCounter++;
+					if(endCharCode < 65 || endCharCode > 122){ // w przypadku, gdy code[i][j][1] nie jest literą, wyświetl int
+						endLetter = endCharCode;
 					}
+					if(move.length == 1){ // w przypadku, gdy tablica ruchu jest jednoelementowa, dodaj element (estetyczne)
+						move[1] = 0;
+					}
+
+					outputArea.textContent += '(' + startLetter + ',' + i + " => " + endLetter + ',' + code[i][j][0] + ",[" + move + '])' + '\r\n';
 				}
 			}
 		}
 	}
 }
-
-function printActualRule(ruleSet, curState, curChar){
-	var startLetter = String.fromCharCode(curChar); // zamiana int na char dla aktualnej litery
-	var endLetter = ruleSet[1];  // odczytanie litery docelowej
-	var endCharCode = endLetter.charCodeAt(0); // odczytanie kodu litery docelowej
-	var move = ruleSet[2]; // odczytanie tablicy ruchu
-
-	if(curChar < 65 || curChar > 122){ // w przypadku, gdy j nie jest literą, wyświetl int
-		startLetter = curChar;
+//go to error in input code
+function selectInputTextArea(element,start,end){
+	if(element.setSelectionRange){
+		element.focus();
+		element.setSelectionRange(start,end);
+	}else if(element.createTextRange){
+		let range=element.createTextRange();
+		element.collapse(true);
+		element.moveEnd('character',start);
+		element.moveStart('character',end);
+		element.select();
+	}else{
+		throw "Unable to select text.";
 	}
-	if(endCharCode < 65 || endCharCode > 122){ // w przypadku, gdy code[i][j][1] nie jest literą, wyświetl int
-		endLetter = endCharCode;
-	}
-	if(move.length == 1){ // w przypadku, gdy tablica ruchu jest jednoelementowa, dodaj element (estetyczne)
-		move[1] = 0;
-	}
-
-	return '(' + startLetter + ',' + curState + " => " + endLetter + ',' + ruleSet[0] + ",[" + move + '])';
 }
