@@ -142,15 +142,15 @@ function compile(){
 	turing.disableElements();
 
 	setTimeout(() => {
-	try{
-		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
-		turing.changeTransit(code);
-		showOutputCode(code);
-		document.getElementById("loaderDiv").setAttribute("hidden", true);
-	}catch(e){
-		document.getElementById("outputCode").textContent=e;
-	}
-	turing.enableElements();
+		try{
+			let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
+			turing.changeTransit(code);
+			showOutputCode(code);
+			document.getElementById("loaderDiv").setAttribute("hidden", true);
+		}catch(e){
+			document.getElementById("outputCode").textContent=e;
+		}
+		turing.enableElements();
 	}, 0);
 }
 
@@ -164,22 +164,7 @@ function showOutputCode(code){
 		if(code[i]!=undefined){
 			for(j = 0; j< code[i].length; j++){
 				if(code[i][j] != undefined){
-					var startLetter = String.fromCharCode(j); // zamiana int na char dla aktualnej litery
-					var endLetter = code[i][j][1];  // odczytanie litery docelowej
-					var endCharCode = endLetter.charCodeAt(0); // odczytanie kodu litery docelowej
-					var move = code[i][j][2]; // odczytanie tablicy ruchu
-
-					if(j < 65 || j > 122){ // w przypadku, gdy j nie jest literą, wyświetl int
-						startLetter = j;
-					}
-					if(endCharCode < 65 || endCharCode > 122){ // w przypadku, gdy code[i][j][1] nie jest literą, wyświetl int
-						endLetter = endCharCode;
-					}
-					if(move.length == 1){ // w przypadku, gdy tablica ruchu jest jednoelementowa, dodaj element (estetyczne)
-						move[1] = 0;
-					}
-
-					outputArea.innerHTML += '(' + startLetter + ',' + i + " => " + endLetter + ',' + code[i][j][0] + ",[" + move + '])';
+					outputArea.innerHTML += printActualRule(code[i][j], i, j);
 
 					if(enterCounter == numOfColCode){
 						enterCounter = 1;
@@ -193,4 +178,23 @@ function showOutputCode(code){
 			}
 		}
 	}
+}
+
+function printActualRule(ruleSet, curState, curChar){
+	var startLetter = String.fromCharCode(curChar); // zamiana int na char dla aktualnej litery
+	var endLetter = ruleSet[1];  // odczytanie litery docelowej
+	var endCharCode = endLetter.charCodeAt(0); // odczytanie kodu litery docelowej
+	var move = ruleSet[2]; // odczytanie tablicy ruchu
+
+	if(curChar < 65 || curChar > 122){ // w przypadku, gdy j nie jest literą, wyświetl int
+		startLetter = curChar;
+	}
+	if(endCharCode < 65 || endCharCode > 122){ // w przypadku, gdy code[i][j][1] nie jest literą, wyświetl int
+		endLetter = endCharCode;
+	}
+	if(move.length == 1){ // w przypadku, gdy tablica ruchu jest jednoelementowa, dodaj element (estetyczne)
+		move[1] = 0;
+	}
+
+	return '(' + startLetter + ',' + curState + " => " + endLetter + ',' + ruleSet[0] + ",[" + move + '])';
 }

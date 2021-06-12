@@ -163,7 +163,7 @@ class Turing {
         if(this.processing){
             if(typeof this.transit[curState] !== 'undefined' && typeof this.transit[curState][curChar] !== 'undefined'){
                 this.step += 1;
-                document.getElementById('startErrorLabel').innerHTML = "Step " + turing.step;
+                document.getElementById('startErrorLabel').innerHTML = "Step " + this.step + "<br/><br/>" + printActualRule(this.transit[curState][curChar], curState, curChar);
                 
                 //aktualizacja ostatnio przetwarzanych danych
                 this.lastChar = curChar;
@@ -193,7 +193,7 @@ class Turing {
                 this.processing = false;
                 this.lastChar = undefined;
                 
-                document.getElementById('startErrorLabel').innerHTML = "There's no rule for current char nad state! Turing stopped working.";
+                document.getElementById('startErrorLabel').innerHTML = "There's no rule for current char and state! Turing stopped working.";
                 document.getElementById('startButton').innerHTML = "Start";
                 document.getElementById('resetButton').setAttribute('hidden', true);
                 this.enableElements();

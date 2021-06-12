@@ -47,14 +47,14 @@
 					</div>
 					<div>
 						<label id="sliderLabel">Animation speed:</label>
-						<input style="" type="range" min="1" max="100" value="50" class="slider" id="animationTime" autocomplete="off">
+						<input id="animationTime" type="range" min="1" max="100" value="50" class="slider" autocomplete="off">
 						<label id="animationTimeLabel">100%</label>
 					</div>
 					<div>
 						<button id="startButton">Start</button>
 						<button id="resetButton" onclick="turing.resetTuring()" hidden="true">Reset</button>
 					</div>
-					<div>
+					<div id="startErrorDiv">
 						<label id="startErrorLabel"></label>
 					</div>
 				</div>

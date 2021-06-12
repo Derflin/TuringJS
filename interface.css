@@ -79,12 +79,17 @@ body{
 	margin-left: 10px;
 }
 
-#animationLabel,#sliderLabel,#animationTimeLabel, #startButton, #resetButton,
-#startErrorLabel{
+#animationLabel,#sliderLabel,#animationTimeLabel, #startButton, #resetButton
+{
 	margin-left: 10px;
 	height:20px;
-	width:100px
+	width:100px;
 }
+
+#startErrorDiv{
+	margin-left: 10px;
+}
+
 #turingInterface{
 	margin: 10px;	
 }
