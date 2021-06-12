@@ -146,10 +146,11 @@ function compile(){
 			let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
 			turing.changeTransit(code);
 			showOutputCode(code);
-			document.getElementById("loaderDiv").setAttribute("hidden", true);
 		}catch(e){
 			document.getElementById("outputCode").textContent=e;
 		}
+		
+		document.getElementById("loaderDiv").setAttribute("hidden", true);
 		turing.enableElements();
 	}, 0);
 }
