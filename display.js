@@ -71,17 +71,29 @@ class Display {
 			this.posRed = [0, 0];
 			this.state = 0;
 			
-			var regex = /[A-Za-z]+/g;
 			var text = document.getElementById('inputData').value;
-			var stringList = text.match(regex);
-			
 			this.dataArray = [];
-			for(var y = 0; y < stringList.length; y++){
-				this.dataArray[y] = [];
-				for(var x = 0; x < stringList[y].length; x++){
-					this.dataArray[y][x] = stringList[y][x];
+			var x = 0;
+			var y = 0;
+			this.dataArray[y] = [];
+			for(var letter_index = 0; letter_index < text.length; letter_index++){
+				if(text[letter_index] != '\n'){
+					this.dataArray[y][x] = text[letter_index];
+					x++;
+				}
+				else{
+					y++;
+					x = 0;
+					this.dataArray[y] = [];
 				}
 			}
+			//text.forEach(char => console.log(char))
+			//for(var y = 0; y < stringList.length; y++){
+			//	this.dataArray[y] = [];
+			//	for(var x = 0; x < stringList[y].length; x++){
+			//		this.dataArray[y][x] = stringList[y][x];
+			//	}
+			//}
 
 			document.getElementById('startErrorLabel').innerHTML = "";
 			document.getElementById('startButton').innerHTML = "Start";
@@ -408,7 +420,7 @@ class Display {
 				//write text in data table (in view)
 				ctx.font = "30px Verdana";
 				ctx.fillStyle = "Black";
-				if(this.dataArray[temp_y + y] != undefined && this.dataArray[temp_y + y][temp_x + x] != undefined){
+				if(this.dataArray[temp_y + y] != undefined && this.dataArray[temp_y + y][temp_x + x] != undefined && this.dataArray[temp_y + y][temp_x + x].charCodeAt(0) != 0){
 					ctx.fillText(this.dataArray[temp_y + y][temp_x + x], x * (max_width_pixel / max_columns) + (0.30 * max_width_pixel / max_columns) - x_offset_pixel, y * (max_height_pixel / max_rows) + (0.65 * max_height_pixel / max_rows) - y_offset_pixel);
 				}
 			}
