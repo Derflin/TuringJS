@@ -146,41 +146,63 @@ document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), f
 
 //compiling code
 function compile(){
-	let program=document.getElementById("inputProgram").value;
-
 	document.getElementById("loaderDiv").removeAttribute("hidden");
 	turing.disableElements();
-
-	setTimeout(() => {
-		try{
-			let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
-			turing.changeTransit(code);
-			showOutputCode(code);
-		}catch(e){
-			document.getElementById("outputCode").textContent=e;
-			if(e instanceof compilingError){
-				selectInputTextArea(document.getElementById("inputProgram"),e.start[2],e.end[2]);
+	
+	let program=document.getElementById("inputProgram").value;
+	try{
+		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
+		turing.changeTransit(code,1000);
+		
+		let showOutputCodeGenerator=showOutputCode(code)
+		let showOutputCodeCorutine=() => {			
+			let {done:done}=showOutputCodeGenerator.next();
+			if(done==true){
+				document.getElementById("loaderDiv").setAttribute("hidden", true);
 			}else{
-				throw e;
+				setTimeout(showOutputCodeCorutine, 0);
 			}
 		}
+		setTimeout(showOutputCodeCorutine, 0);
+	}catch(e){
+		document.getElementById("outputCode").textContent=e;
+		if(e instanceof compilingError){
+			selectInputTextArea(document.getElementById("inputProgram"),e.start[2],e.end[2]);
+		}else{
+			throw e;
+		}
+	}
+	turing.enableElements();
 		
-		document.getElementById("loaderDiv").setAttribute("hidden", true);
-		turing.enableElements();
-	}, 0);
 }
 
 //--------------------------
 //show code existing rules
-function showOutputCode(code){
+function* showOutputCode(code,doze=1){
 	let outputArea = document.getElementById("outputCode");
 	outputArea.innerHTML = "";
+	count=0;
+	for( let state=0 ;state<code.length;++state)
+		if(code[state]){
+			for(let char=0 ;char<code[state].length;++char){
+				if(code[state][char]){
+					outputArea.innerHTML += printActualRule(code[state][char], state, char) + '	';
+					++count;
+					if(count>=doze){
+						count=0;
+						yield;
+					}
+				}
+			}
+		}
 
+	/*
 	code.forEach((first, i) => {
 		first.forEach((second, j) => {
 			outputArea.innerHTML += printActualRule(second, i, j) + '	';
 		});
 	});
+	*/
 }
 
 function printActualRule(ruleSet, curState, curChar){
