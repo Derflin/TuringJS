@@ -145,7 +145,10 @@ canvas.addEventListener('click', (event)=>display.canvasOnMouseClick(event), fal
 document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), false);
 
 //compiling code
+const emptyCurotine={priority:2**10,generator:(function*(){})(),curotine:()=>undefined}
+let previousCorutine=emptyCurotine;
 function compile(){
+	stopCurotine(previousCorutine);
 	document.getElementById("loaderDiv").removeAttribute("hidden");
 	turing.disableElements();
 	
@@ -154,16 +157,7 @@ function compile(){
 		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
 		turing.changeTransit(code);
 		
-		let showOutputCodeGenerator=showOutputCode(code,20)
-		let showOutputCodeCorutine=() => {			
-			let {done:done}=showOutputCodeGenerator.next();
-			if(done==true){
-				document.getElementById("loaderDiv").setAttribute("hidden", true);
-			}else{
-				setTimeout(showOutputCodeCorutine, 0);
-			}
-		}
-		setTimeout(showOutputCodeCorutine, 0);
+		previousCorutine=runCurotine(showOutputCode(code,20));
 	}catch(e){
 		document.getElementById("outputCode").textContent=e;
 		if(e instanceof compilingError){
@@ -171,8 +165,9 @@ function compile(){
 		}else{
 			throw e;
 		}
+	}finally{
+		turing.enableElements();
 	}
-	turing.enableElements();
 		
 }
 
@@ -199,7 +194,9 @@ function* showOutputCode(code,doze=1){
 		}else{
 			++count;
 		}
+		
 	}
+	document.getElementById("loaderDiv").setAttribute("hidden", true);
 
 	/*
 	code.forEach((first, i) => {
@@ -242,4 +239,32 @@ function selectInputTextArea(element,start,end){
 	}else{
 		throw "Unable to select text.";
 	}
+}
+
+function runCurotine(generator,priority=0){
+	let reference={
+			priority:priority,
+			id:0,
+			generator:generator,
+			corutine:() => {			
+				let {done:done}=generator.next();
+				if(done){
+					reference.id=clearInterval(reference.id);
+				}
+			}
+	}
+	reference.id = setInterval(reference.corutine, priority);
+	return reference;
+}
+function stopCurotine(reference){
+	clearInterval(reference.id);
+}
+function continueCurotine(reference){
+	setInterval(reference.corutine,reference.priority);
+}
+function stepCurotine(reference){
+	setTimeout(reference.corutine,reference.priority);
+}
+function stepNowCurotine(reference){//do one step without of setTimeout paralellizm
+	return reference.generator.next(...arguments);
 }
