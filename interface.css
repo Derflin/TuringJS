@@ -44,6 +44,11 @@ body{
 }
 #loaderDiv{
 	margin-top: 5px;
+	float:left;
+	margin-right: 5px;
+}
+#compileCheckBox{
+	margin-top: 10px;
 	overflow: hidden;
 }
 

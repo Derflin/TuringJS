@@ -48,6 +48,10 @@ class Display {
 		this.state = 0;
 		this.doUpdate();
 	}
+	resetData(){
+		this.dataArray = [];
+		this.doUpdate();
+	}
 	changeChar(newChar) {
 		this.dataArray[this.pos[0] + this.posRed[0]][this.pos[1] + this.posRed[1]] = newChar;
 		this.doUpdate();

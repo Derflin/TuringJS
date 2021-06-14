@@ -1,11 +1,7 @@
 /*
-* Notatki dla siebie:
 * tablica display.pos[y,x] wskazuje współrzędne tablicy display.dataArray, na które wskazuje środek ekranu
 * tablica display.posRed[y,x] wskazuje współrzędne czerwonego kursora (ramki) względem środka planszy
 * współrzędne elementu w display.dataArray to suma odpowiednich elementów tych dwóch tablic
-*
-* TODO: cofnięcie do pozycji startowej po kliknięciu "Start"
-*       ruch na ukos (może się przydać)
 */
 
 class Turing {
@@ -19,31 +15,6 @@ class Turing {
 
         this.processing = false; //true - przetwarzanie turinga jest uruchomione, false - program nie działa, można wporwadzać dane
         this.step = 0;
-
-        //testowa tablica reguł
-		/*
-        this.transit[0] = [];
-        this.transit[0][65] = [1, "B", [1, 1]];
-        this.transit[0][0] = [0, "\0", [0, 0]];
-        this.transit[0][101] = [0, "f", [-1, 1]];
-
-        this.transit[1] = [];
-        this.transit[1][114] = [2, "y", [0, 1]];
-        this.transit[1][101] = [2, "f", [1, 1]];
-        
-        this.transit[2] = [];
-        this.transit[2][101] = [3, "f", [-1, 1]];
-        this.transit[2][112] = [4, "t", [0, -1]];
-
-        this.transit[3] = [];
-        this.transit[3][101] = [4, "u", [0, -1]];
-        this.transit[3][109] = [3, "n", [-1, -1]];
-        this.transit[3][78] = [4, "O", [1, -1]];
-  
-        this.transit[4] = [];
-        this.transit[4][121] = [4, "y", [0, 0]];
-        this.transit[4][102] = [4, "f", [0, 0]];
-		*/
     }
 
     changeTransit(newTransit){
@@ -100,10 +71,12 @@ class Turing {
         this.lastPos = [-1, -1]; 
         this.step = 0;
 
-        document.getElementById('startErrorLabel').innerHTML = "Reseted Turing";
+        document.getElementById('startErrorLabel').innerHTML = "Turing has been reset";
         document.getElementById('startButton').innerHTML = "Start";
+        document.getElementById("outputCode").value = "";
         document.getElementById('resetButton').setAttribute('hidden', true);
 
+        display.resetData();
         display.resetRed();
         showOutputCode(this.transit);
     }

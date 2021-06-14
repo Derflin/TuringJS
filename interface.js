@@ -146,6 +146,8 @@ document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), f
 
 //compiling code
 function compile(){
+	var compileCheck = document.getElementById("compileCheckBox");
+
 	document.getElementById("loaderDiv").removeAttribute("hidden");
 	turing.disableElements();
 	
@@ -153,17 +155,24 @@ function compile(){
 	try{
 		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
 		turing.changeTransit(code);
-		
-		let showOutputCodeGenerator=showOutputCode(code,20)
-		let showOutputCodeCorutine=() => {			
-			let {done:done}=showOutputCodeGenerator.next();
-			if(done==true){
-				document.getElementById("loaderDiv").setAttribute("hidden", true);
-			}else{
-				setTimeout(showOutputCodeCorutine, 0);
+
+		if(compileCheck.checked == true){
+			let showOutputCodeGenerator=showOutputCode(code,20)
+			let showOutputCodeCorutine=() => {			
+				let {done:done}=showOutputCodeGenerator.next();
+				if(done==true){
+					document.getElementById("loaderDiv").setAttribute("hidden", true);
+				}else{
+					setTimeout(showOutputCodeCorutine, 0);
+				}
 			}
+			setTimeout(showOutputCodeCorutine, 0);
 		}
-		setTimeout(showOutputCodeCorutine, 0);
+		else{
+			document.getElementById("outputCode").value = "Compilation done!";
+			document.getElementById("loaderDiv").setAttribute("hidden", true);
+		}
+		
 	}catch(e){
 		document.getElementById("outputCode").textContent=e;
 		if(e instanceof compilingError){
