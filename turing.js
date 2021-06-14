@@ -10,7 +10,7 @@ class Turing {
         this.transit = []; //transit[n state][m char][newstate,newchar,move], move = [x,y]
 
         this.lastState = -1; //ostatni przetwarzany stan (wartość startowa nieistotna)
-        this.lastChar; //ostatnia przetwarzana wartość z (wartośc startowa istotna, w razie zmiany dostosować kod)
+        this.lastChar; //ostatnia przetwarzana wartość
         this.lastPos = [-1, -1]; //ostatnia przetwarzana pozycja (wartość startowa nieistotna)
 
         this.processing = false; //true - przetwarzanie turinga jest uruchomione, false - program nie działa, można wporwadzać dane
@@ -95,7 +95,7 @@ class Turing {
 
         if(document.getElementById('animationCheckBox').checked == true){
             if(display.pos[0] != 0 || display.posRed[0] != 0 || display.pos[1] != 0 || display.posRed[1] != 0){
-                display.resetRed(this);
+                display.resetRed(this); // powrót kursora na pozycję startową
             }
             else{
                 this.startTuring();
@@ -109,7 +109,7 @@ class Turing {
             document.getElementById('resultButton').removeAttribute('disabled');
 
             if(display.pos[0] != 0 || display.posRed[0] != 0 || display.pos[1] != 0 || display.posRed[1] != 0){
-                display.resetRed(this);
+                display.resetRed(this); // powrót kursora na pozycję startową
             }
         }
     }
@@ -154,7 +154,7 @@ class Turing {
                 this.lastPos[0] = display.pos[0] + display.posRed[0];
                 this.lastPos[1] = display.pos[1] + display.posRed[1];
         
-                //pobranie nowych wartości i kierunku ruchu z tablisy reguł
+                //pobranie nowych wartości i kierunku ruchu z tablicy reguł
                 var newState = this.transit[curState][curChar][0];
                 var newChar = this.transit[curState][curChar][1];
                 var move = this.transit[curState][curChar][2];
@@ -163,7 +163,7 @@ class Turing {
                 display.changeState(newState);
                 display.changeChar(newChar);
     
-                setTimeout(() => { //czekanie 1s przed ruchem
+                setTimeout(() => { //czekanie przed ruchem (długość zależna od ustawionej prędkości animacji)
                     if(move.length == 2){ // ruch dla pełnej tablicy ruchu
                         display.moveTuring(this, move[0], move[1]);
                     }
