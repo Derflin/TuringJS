@@ -152,9 +152,9 @@ function compile(){
 	let program=document.getElementById("inputProgram").value;
 	try{
 		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
-		turing.changeTransit(code,1000);
+		turing.changeTransit(code);
 		
-		let showOutputCodeGenerator=showOutputCode(code)
+		let showOutputCodeGenerator=showOutputCode(code,20)
 		let showOutputCodeCorutine=() => {			
 			let {done:done}=showOutputCodeGenerator.next();
 			if(done==true){
@@ -180,21 +180,26 @@ function compile(){
 //show code existing rules
 function* showOutputCode(code,doze=1){
 	let outputArea = document.getElementById("outputCode");
-	outputArea.innerHTML = "";
+	outputArea.value = "";
 	count=0;
-	for( let state=0 ;state<code.length;++state)
+	for( let state=0 ;state<code.length;++state){
 		if(code[state]){
 			for(let char=0 ;char<code[state].length;++char){
 				if(code[state][char]){
-					outputArea.innerHTML += printActualRule(code[state][char], state, char) + '	';
+					outputArea.value += printActualRule(code[state][char], state, char) + '	';
 					++count;
 					if(count>=doze){
 						count=0;
 						yield;
 					}
+				}else{
+					++count;
 				}
 			}
+		}else{
+			++count;
 		}
+	}
 
 	/*
 	code.forEach((first, i) => {
