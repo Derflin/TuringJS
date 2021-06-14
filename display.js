@@ -104,6 +104,28 @@ class Display {
 			this.doUpdate();
 		}
 	}
+	outputData(){
+		var outDataArray = [];
+		var outDataRow = 0;
+		var outDataChar = 0;
+
+		this.dataArray.forEach((row) => {
+			row.forEach((char) =>{
+				if(char.charCodeAt(0) != 0){
+					if(outDataArray[outDataRow] == undefined){
+						outDataArray[outDataRow] = [""];
+					}
+
+					outDataArray[outDataRow] += char;
+					outDataChar++;
+				}
+			});
+			outDataRow++;
+			outDataChar = 0;
+		});
+
+		return outDataArray;
+	}
 
 	makeBoardMove(direction, value) {
 		this.editMode = false;
@@ -464,6 +486,7 @@ class Display {
 				}
 				else{
 					document.getElementById('startButton').removeAttribute('disabled');
+					document.getElementById('resultButton').removeAttribute('disabled');
 				}
 			}
 		}

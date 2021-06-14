@@ -35,6 +35,7 @@ class Turing {
         document.getElementById('animationCheckBox').setAttribute('disabled', true);
         document.getElementById('resetButton').setAttribute('disabled', true);
         document.getElementById('buttonCompile').setAttribute('disabled', true);
+        document.getElementById('resultButton').setAttribute('disabled', true);
         this.disableMove();
     }
 
@@ -45,6 +46,7 @@ class Turing {
         document.getElementById('startButton').removeAttribute('disabled');
         document.getElementById('resetButton').removeAttribute('disabled');
         document.getElementById('buttonCompile').removeAttribute('disabled');
+        document.getElementById('resultButton').removeAttribute('disabled');
         this.enableMove();
     }
 
@@ -75,6 +77,8 @@ class Turing {
         document.getElementById('startButton').innerHTML = "Start";
         document.getElementById("outputCode").value = "";
         document.getElementById('resetButton').setAttribute('hidden', true);
+        document.getElementById('resultButton').innerHTML = "Show result";
+        document.getElementById('result').setAttribute('hidden', true);
 
         display.resetData();
         display.resetRed();
@@ -99,6 +103,7 @@ class Turing {
             document.getElementById('animationCheckBox').removeAttribute('disabled');
             document.getElementById('resetButton').removeAttribute('disabled');
             document.getElementById('buttonCompile').removeAttribute('disabled');
+            document.getElementById('resultButton').removeAttribute('disabled');
 
             if(display.pos[0] != 0 || display.posRed[0] != 0 || display.pos[1] != 0 || display.posRed[1] != 0){
                 display.resetRed(this);
@@ -126,6 +131,8 @@ class Turing {
                 document.getElementById('startErrorLabel').innerHTML = "Sorting is done!";
                 document.getElementById('startButton').innerHTML = "Start";
                 document.getElementById('resetButton').setAttribute('hidden', true);
+
+                showResult();
                 this.enableElements();
             }
         }

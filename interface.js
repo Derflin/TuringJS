@@ -41,6 +41,9 @@ var tmpPos;
 button.onclick = function() {
 	var buttonText = this.innerHTML;
 	var animationOn = document.getElementById('animationCheckBox').checked;
+	
+	document.getElementById('resultButton').innerHTML = "Show result";
+	document.getElementById('result').setAttribute('hidden', true);
 
 	switch(buttonText){
 		case "Start":
@@ -106,6 +109,7 @@ function continueEnableButtons(){
 			document.getElementById('resetButton').removeAttribute('disabled');
 			document.getElementById('buttonCompile').removeAttribute('disabled');
 			document.getElementById('startButton').removeAttribute('disabled');
+			document.getElementById('resultButton').removeAttribute('disabled');
 			break;
 	}
 }
@@ -180,6 +184,7 @@ function compile(){
 		}else{
 			throw e;
 		}
+		document.getElementById("loaderDiv").setAttribute("hidden", true);
 	}
 	turing.enableElements();
 		
@@ -251,4 +256,33 @@ function selectInputTextArea(element,start,end){
 	}else{
 		throw "Unable to select text.";
 	}
+}
+//----------------------------------------------------------
+var resultButton = document.getElementById('resultButton');
+
+resultButton.onclick = function() {
+	var resultDiv = document.getElementById('result');
+
+	if(this.innerHTML == "Show result"){
+		this.innerHTML = "Hide result";
+		resultDiv.removeAttribute('hidden');
+
+		showResult();
+	}
+	else{
+		this.innerHTML = "Show result";
+		resultDiv.setAttribute("hidden", true);
+	}
+
+}
+
+function showResult(){
+	var outDataArray = display.outputData();
+	var outResult = document.getElementById("outputResult");
+
+	outResult.value = "";
+
+	outDataArray.forEach(row => {
+		outResult.value += row + '\r\n';
+	});
 }

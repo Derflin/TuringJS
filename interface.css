@@ -68,7 +68,14 @@ body{
 	margin: 0px;
 	height: 138px;
 	width: 95%;
-	overflow: scroll;
+	overflow: auto;
+	white-space: pre-wrap;
+}
+#outputResult{
+	margin: 0px;
+	height: 138px;
+	width: 95%;
+	overflow: auto;
 	white-space: pre-wrap;
 }
 
@@ -80,6 +87,14 @@ body{
 	margin-top: 5px;
 	height:20px;
 	width:100px
+}
+
+#resultButton{
+	margin: 0px;
+	margin-left: 10px;
+	margin-top: 5px;
+	height:20px;
+	width:100px;
 }
 
 #animationCheckBox{
