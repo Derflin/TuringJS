@@ -73,12 +73,15 @@ class Turing {
         this.lastPos = [-1, -1]; 
         this.step = 0;
 
+        stopCurotine(previousCorutine);
+
         document.getElementById('startErrorLabel').innerHTML = "Turing has been reset";
         document.getElementById('startButton').innerHTML = "Start";
         document.getElementById("outputCode").value = "";
         document.getElementById('resetButton').setAttribute('hidden', true);
         document.getElementById('resultButton').innerHTML = "Show result";
         document.getElementById('result').setAttribute('hidden', true);
+		document.getElementById("loaderDiv").setAttribute("hidden", true);
 
         display.resetData();
         display.resetRed();
