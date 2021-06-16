@@ -69,7 +69,7 @@
 		<div id="editor">
 			<div>
 				<h2>Insert Data</h2>
-				<textarea id="inputData">Area&#13;&#10;Help&#13;&#10;Needed&#13;&#10;Immediately&#13;&#10;Andrzej&#13;&#10;Droprate&#13;&#10;Such&#13;&#10;a</textarea>
+				<textarea id="inputData">Kuba&#13;&#10;Andrzej&#13;&#10;Milena&#13;&#10;Krzysztof&#13;&#10;Maciej&#13;&#10;Aleksander&#13;&#10;Roman&#13;&#10;Konrad&#13;&#10;Arek</textarea>
 				<br/>
 				<button id="inputButton" onclick="display.insertData()">Insert</button> 
 			</div>
@@ -82,80 +82,107 @@
 				<textarea id="inputProgram">
 //Example code: Bubble Sort
 
-//moveLeft - initial state 5
+//stan 5
+//przesuwanie pozycji na taśmie w lewo aż dotrze się do początku wyrazu
 (@={<'A','Z'>,<'a','z'>},5)=>(@,5)-x
-//jak dotrzesz do końca przejdź w stan 7 -> sprawdź czy moveUp czy moveRight
+//jak dotrzesz do początku słowa, to przesuń się na początek kolejnego
 (0,5)=>(0,7)+x+y
 
-//sprawdź czy moveRight - initial state 7
+//stan 7
+//sprawdzenie czy zostały jeszcze jakieś rzędy z danymi do przetworzenia
 (@={<'A','Z'>,<'a','z'>},7)=>(@,0)
-//sprawdź czy moveUp
+//jeśli nie, to przejdź do funkcji powrotu do pierwszego rzędu z danymi
 (0,7)=>(0,13)-y
 
-//moveUp - initial state 13
-(@={<'A','Z'>,<'a','z'>},14)=>(@,14)-y
-//jak dotrzesz do początku przejdź w stan 15 -> sprawdzenie, czy posortowano
-(0,14)=>(0,15)-x+y
-(0,15)=>(0,0)+x
-('*',15)=>(0,33)+x
-//stan końcowy
-(@={<'A','Z'>,<'a','z'>},33)=>(@,33)
-
-//oznaczenie posortowania ostatniego elementu
+//stan 13
+//początek procesu powrotu do początku przetwarzanych danych, zostawienie znaku '*' przy posortowanym rzędzie
 (@={<'A','Z'>,<'a','z'>},13)=>(@,13)-x
 (0,13)=>('*',14)+x-y
+//powrót do pierwszego rzędu z danymi
+(@={<'A','Z'>,<'a','z'>},14)=>(@,14)-y
+(0,14)=>(0,15)-x+y
+//po dotarciu do pierwszego rzędu, sprawdź czy już pozostałe zostały posortowane, jeśli tak przejdź do stanu końcowego
+('*',15)=>(0,33)+x
+//inaczej rozpocznij ponowne sortowanie
+(0,15)=>(0,0)+x
 
-//exchange - initial state 99
+//stan końcowy 33
+(@={<'A','Z'>,<'a','z'>},33)=>(@,33)
+
+//stan 99
+//początek procesu zamiany miejscami dwóch słów (w obecnym wierszu oraz wierszu następnym)
+//zapamiętanie pierwszego znaku
 (@={<'A','Z'>,<'a','z'>},99)=>(@,101+@-'A')+y
 (0,99)=>(0,100)+y
 
+//zapamiętanie drugiego znaku i nadpisanie go pierwszym
 (@={<'A','Z'>,<'a','z'>},S=<101,160>)=>(S-101+'A',201+@-'A')-y
 (0,S=<101,160>)=>(S-101+'A',200)-y
 (@={<'A','Z'>,<'a','z'>},100)=>(0,201+@-'A')-y
+//sprawdzenie przy odczycie drugiego znaku, czy obydwa słowa już zostały w pełni zamienione miejscami
 (0,100)=>(0,21)-y
 
-(0,21)=>(0,21)-x
-(@={<'A','Z'>,<'a','z'>},21)=>(@,5)
-
+//nadpisanie pierwszego znaku drugim oraz przejście do zamiany miejscami kolejnej pary znaków
 (@={<'A','Z'>,<'a','z'>},S=<201,260>)=>(S-201+'A',99)+x
 (0,S=<201,260>)=>(S-201+'A',99)+x
 (@={<'A','Z'>,<'a','z'>},S=200)=>(0,99)+x
 
-//check if exchange needed - initial state 0
+//stan 21
+//jeśli dwa słowa zostały zamienione miejscami, to przesuń wskaźnik na ostatnią literę pierwszego z nich
+(0,21)=>(0,21)-x
+//i rozpocznij przejście do przetwarzania kolejnej pary słów
+(@={<'A','Z'>,<'a','z'>},21)=>(@,5)
+
+//stan 0
+//sprawdzenie czy w wierszu znajduję się znak
 (@={<'A','Z'>,<'a','z'>},0)=>(@,1)+y
+//jeśli nie to przejść w stan końcowy
 (0,0)=>(0,0)
+//jeśli tak, to
 
-(0,1)=>(0,13)-y
-
+//sprawdzić czy w drugim przetwarzanym wierszu znajduję się słowo do posortowania
 (@={<'A','Z'>,<'a','z'>},1)=>(@,2)-x
+//jeśli nie to znaczy że należy powrócić do początku wierszy z danymi do posortowania
+(0,1)=>(0,13)-y
+//jeśli tak, to 
 
+//sprawdzić czy drugi wiersz nie został już wcześniej posortowany
 ('*',2)=>(0,3)-y
+//jeśli tak, to przenieść położenie znaku '*' oznaczającego posortowane wiersze, wiersz wyżej 
+(0,3)=>('*',14)+x
+//inaczej przejść do sprawdzenia czy dwa wiersze muszą zostać zamienione miejscami 
 (0,2)=>(0,79)+x-y
 
-(0,3)=>('*',14)+x
-
+//stan 79
+//początek procesu porównującego po kolei znaki w dwóch wierszach, w celu sprawdzenia czy należy je zamienić miejscami
+//zapamiętanie znaku w pierwszym wierszu
 (@=<'A','Z'>,79)=>(@,301+@-'A')+y
 (@=<'a','z'>,79)=>(@,301+@-'a')+y
 (0,79)=>(0,300)+y
 
+//porównanie poprzedniego znaku ze znakiem w drugim wierszu
 (@=<'A','Z'>,S=<301,360>)=>(@,S-301-@+'A'+450)-y
 (@=<'a','z'>,S=<301,360>)=>(@,S-301-@+'a'+450)-y
 (0,S=<301,360>)=>(0,451)-y
 (@={<'A','Z'>,<'a','z'>},300)=>(@,449)-y
+//jeśli obydwa są równe 0, to oznacza, że dotarliśmy do końca obydwu porównywanych słów - są identyczne, nie trzeba ich zamieniać miejscami
 (0,300)=>(0,21)-y
 
+//jeżeli pierwszy znak był mniejszy od drugiego, to znaczy że dwa wiersze są już wobec siebie posortowane, nie trzeba ich zamieniać miejscami
 (@={<'A','Z'>,<'a','z'>},S=<420,449>)=>(@,21)
 (0,S=<420,449>)=>(0,21)
 
+//jeżeli dwa znaki miały taką samą wartość, to należy sprawdzić wartości dwóch kolejnych
 (@={<'A','Z'>,<'a','z'>},450)=>(@,79)+x
 (0,450)=>(0,79)+x
 
+//jeżeli pierwszy znak jest większy od drugiego, to znaczy że wiersze nie są wobec siebie posortowane, więc trzeba je zamienić miejscami
 (@={<'A','Z'>,<'a','z'>},S=<451,480>)=>(@,81)
 (0,S=<451,480>)=>(0,81)
-
+//przejście z powrotem do ostatniej litery słowa w pierwszym rzędzie
 (0,81)=>(0,81)-x
 (@={<'A','Z'>,<'a','z'>},81)=>(@,85)
-
+//następnie przejście na jego pierwszą literę i rozpoczęcie procesu zamiany miejscami
 (@={<'A','Z'>,<'a','z'>},85)=>(@,85)-x
 (0,85)=>(0,99)+x			
 				</textarea>
