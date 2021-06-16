@@ -149,17 +149,10 @@ canvas.addEventListener('click', (event)=>display.canvasOnMouseClick(event), fal
 document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), false);
 
 //compiling code
-const emptyCurotine={priority:2**10,generator:(function*(){})(),curotine:()=>undefined}
-let previousCorutine=emptyCurotine;
 function compile(){
 	var compileCheck = document.getElementById("compileCheckBox");
-
-	stopCurotine(previousCorutine);
-
-	setTimeout(() => {
-		document.getElementById("loaderDiv").removeAttribute("hidden");
-		turing.disableElements();
-	},0);
+	document.getElementById("loaderDiv").removeAttribute("hidden");
+	turing.disableElements();
 	
 	let program=document.getElementById("inputProgram").value;
 
@@ -168,22 +161,23 @@ function compile(){
 		turing.changeTransit(code);
 
 		if(compileCheck.checked == true){
-			previousCorutine=runCurotine(showOutputCode(code,20));
-		}
-		else{
-			document.getElementById("outputCode").value = "Compilation done!";
 			setTimeout(() => {
+				showOutputCode(code);
 				document.getElementById("loaderDiv").setAttribute("hidden", true);
 			},0);
 		}
-		
+		else{
+			document.getElementById("outputCode").value = "Compilation done!";
+			document.getElementById("loaderDiv").setAttribute("hidden", true);
+		}
 		
 	}catch(e){
+		document.getElementById("loaderDiv").setAttribute("hidden", true);
 		document.getElementById("outputCode").textContent=e;
 		if(e instanceof compilingError){
 			selectInputTextArea(document.getElementById("inputProgram"),e.start[2],e.end[2]);
 		}else{
-			throw e;
+			throw e;//for debugging
 		}
 		setTimeout(() => {
 			document.getElementById("loaderDiv").setAttribute("hidden", true);
@@ -198,38 +192,16 @@ function compile(){
 
 //--------------------------
 //show code existing rules
-function* showOutputCode(code,doze=1){
+function showOutputCode(code){
 	let outputArea = document.getElementById("outputCode");
-	outputArea.value = "";
-	count=0;
-	for( let state=0 ;state<code.length;++state){
-		if(code[state]){
-			for(let char=0 ;char<code[state].length;++char){
-				if(code[state][char]){
-					outputArea.value += printActualRule(code[state][char], state, char) + '	';
-					++count;
-					if(count>=doze){
-						count=0;
-						yield;
-					}
-				}else{
-					++count;
-				}
-			}
-		}else{
-			++count;
-		}
-		
-	}
-	document.getElementById("loaderDiv").setAttribute("hidden", true);
+	let buffor = [];
 
-	/*
-	code.forEach((first, i) => {
-		first.forEach((second, j) => {
-			outputArea.innerHTML += printActualRule(second, i, j) + '	';
+	code.forEach((chars, state) => {
+		chars.forEach((body, char) => {
+			buffor.push( printActualRule(body, state, char));
 		});
 	});
-	*/
+	outputArea.textContent=buffor.join('\t')
 }
 
 function printActualRule(ruleSet, curState, curChar){
