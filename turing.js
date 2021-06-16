@@ -131,7 +131,7 @@ class Turing {
                 this.processing = false;
                 this.lastChar = undefined;
 
-                document.getElementById('startErrorLabel').innerHTML = "Sorting is done!";
+                document.getElementById('startErrorLabel').innerHTML = "Sorting is done in " + this.step + " steps";
                 document.getElementById('startButton').innerHTML = "Start";
                 document.getElementById('resetButton').setAttribute('hidden', true);
 
