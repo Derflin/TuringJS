@@ -164,7 +164,9 @@ function compile(){
 	let program=document.getElementById("inputProgram").value;
 
 	try{
+		console.time("Compilation");
 		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
+		console.timeEnd("Compilation");
 		turing.changeTransit(code);
 
 		if(compileCheck.checked == true){
@@ -182,6 +184,7 @@ function compile(){
 		document.getElementById("outputCode").textContent=e;
 		if(e instanceof compilingError){
 			selectInputTextArea(document.getElementById("inputProgram"),e.start[2],e.end[2]);
+			throw e;
 		}else{
 			throw e;
 		}
@@ -199,6 +202,7 @@ function compile(){
 //--------------------------
 //show code existing rules
 function* showOutputCode(code,doze=1){
+	console.time("Printing");
 	let outputArea = document.getElementById("outputCode");
 	outputArea.value = "";
 	count=0;
@@ -222,6 +226,7 @@ function* showOutputCode(code,doze=1){
 		
 	}
 	document.getElementById("loaderDiv").setAttribute("hidden", true);
+	console.timeEnd("Printing");
 
 	/*
 	code.forEach((first, i) => {

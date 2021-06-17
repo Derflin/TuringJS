@@ -207,12 +207,18 @@ class identifier{
 		this.name=value
 	}
 	calc(symbols){
+		if(!symbols.has(this.name)){
+			throw new undeclaredIdentifierError(this);
+		}
 		return symbols.get(this.name).value;
 	}
 	stringify(h=0){
 		return " ".repeat(h)+this.name;
 	}
 	typing(symbols){
+		if(!symbols.has(this.name)){
+			throw new undeclaredIdentifierError(this);
+		}
 		return symbols.get(this.name).type;
 	}
 }
@@ -294,7 +300,7 @@ class condition{
 		if(this.condition.typing(symbols)=="integer"){
 			this.condition=new union([this.condition]);
 		}
-		return "integer";
+		return "set";
 	}
 }
 
@@ -351,18 +357,6 @@ class rule{
 		this.newchar=newchar;
 		this.move=move;
 	}
-	/*
-	get value(){
-		let rules=[];
-		while(true){
-			let rule=this.getRule();
-			if(rule==null || rule==undefined)
-				break;
-			rules.push(rule);
-		}
-		return rules;
-	}
-	*/
 	toString(){
 		return ['(',this.currchar,',',this.currstate,')=>(',this.newchar,',',this.newstate,')',this.move].join('');
 	}
@@ -381,15 +375,23 @@ class rule{
 		].join('\n')
 	}
 	typing(symbols){
-		symbols.set(this.currchar.name,{
-			type:"integer"
-		}).set(this.currstate.name,{
-			type:"integer"
-		});
-		if(this.currstate.typing(symbols)=="integer"){
+		if(symbols.has(this.currchar.name)){
+			throw redefinitionError(this.currchar,symbols.get(this.currchar.name));
+		}
+		if(symbols.has(this.currstate.name)){
+			throw redefinitionError(this.currstate,symbols.get(this.currstate.name));
+		}
+		symbols.set(this.currstate.name,{
+			type:"integer",
+			value:undefined
+		}).set(this.currchar.name,{
+			type:"integer",
+			value:undefined
+		})
+		if(this.currstate.typing(symbols)!="set"){
 			//this.currstate=new union([this.currstate]);
 		}
-		if(this.currchar.typing(symbols)=="integer"){
+		if(this.currchar.typing(symbols)!="set"){
 			//this.currchar=new union([this.currchar]);
 		}
 		if(this.newstate.typing(symbols)!="integer"){
@@ -399,24 +401,76 @@ class rule{
 			throw "invalid type of new char in "+this.stringify();
 		}
 		this.move.typing(symbols)
+		symbols.delete(this.currstate.name)
+		symbols.delete(this.currchar.name);
 	}
 	*getGenerator(symbols){
-		let chars=this.currchar.calc(symbols)
-		for(let chr of chars.value){
-			symbols.get(chars.name).value=chr;
-			let states=this.currstate.calc(symbols)
-			for(let state of states.value){
-				symbols.get(states.name).value=state;
-				yield {
-					chr:chr,
-					state:state,
-					newchar:this.newchar.calc(symbols),
-					newstate:this.newstate.calc(symbols),
-					move:this.move.calc(symbols)					
+		if(this.currchar.name==this.currstate.name && this.currchar.name){
+			throw new redefinitionError(this.currstate.name,this.currchar.name);
+		}
+		try{
+			let chars=this.currchar.calc(symbols);
+				symbols.set(this.currstate.name,{
+					type:"integer",
+					value:undefined
+				}).set(this.currchar.name,{
+					type:"integer",
+					value:undefined
+				});
+			for(let chr of chars.value){
+				symbols.get(this.currchar.name).value=chr;
+				let states=this.currstate.calc(symbols)
+				for(let state of states.value){
+					symbols.get(this.currstate.name).value=state;
+					yield {
+						chr:chr,
+						state:state,
+						newchar:this.newchar.calc(symbols),
+						newstate:this.newstate.calc(symbols),
+						move:this.move.calc(symbols)					
+					}
 				}
 			}
+		}catch(e){
+			if(e instanceof undeclaredIdentifierError && e.identifier.name==this.currstate.name){//if tape condition require to know state value
+				let states
+				try{
+					states=this.currstate.calc(symbols)
+				}catch(e){
+					if(e instanceof undeclaredIdentifierError && e.identifier.name==this.currchar.name){//if tape condition and state condition require each other
+						throw new cyclicDepandancyError(this.currstate,this.currchar);
+					}else {
+						throw e;
+					}
+				}
+				symbols.set(this.currstate.name,{
+					type:"integer",
+					value:undefined
+				}).set(this.currchar.name,{
+					type:"integer",
+					value:undefined
+				})
+				for(let state of states.value){
+					symbols.get(this.currstate.name).value=state;
+					let chars=this.currchar.calc(symbols)
+					for(let chr of chars.value){
+						symbols.get(this.currchar.name).value=chr;
+						yield {
+							chr:chr,
+							state:state,
+							newchar:this.newchar.calc(symbols),
+							newstate:this.newstate.calc(symbols),
+							move:this.move.calc(symbols)					
+						}
+					}
+				}
+			}else{
+				throw e;
+			}
 		}
-	
+		
+		symbols.delete(this.currstate.name)
+		symbols.delete(this.currchar.name);
 	}
 }
 
