@@ -157,7 +157,9 @@ function compile(){
 	let program=document.getElementById("inputProgram").value;
 
 	try{
+		console.time("Compilation");
 		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
+		console.timeEnd("Compilation");
 		turing.changeTransit(code);
 
 		if(compileCheck.checked == true){
@@ -176,15 +178,16 @@ function compile(){
 		document.getElementById("outputCode").textContent=e;
 		if(e instanceof compilingError){
 			selectInputTextArea(document.getElementById("inputProgram"),e.start[2],e.end[2]);
+			throw e;
 		}else{
 			throw e;//for debugging
 		}
-		setTimeout(() => {
-			document.getElementById("loaderDiv").setAttribute("hidden", true);
-		},0);
 	}finally{
 		setTimeout(() => {
 			turing.enableElements();
+		},0);
+		setTimeout(() => {
+			document.getElementById("loaderDiv").setAttribute("hidden", true);
 		},0);
 	}
 		
