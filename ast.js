@@ -1,3 +1,12 @@
+class astNode{
+	constructor(start,end){
+		this.start=start;
+		this.end=end;
+	}
+	static fromToken(token){
+		return new astNode(token.start,token.end);
+	}
+}
 let binops=[];
 {
 let operators=["**","*","/","%","+","-","*",">>","<<","&","|","^"];
@@ -203,8 +212,13 @@ class AST{
 	}
 }
 class identifier{
-	constructor(value){
-		this.name=value
+	constructor(value,start,end){
+		this.name=value;
+		this.start=start;
+		this.end=end;
+	}
+	static fromToken(token){
+		return new identifier(token.value,token.start,token.end);
 	}
 	calc(symbols){
 		if(!symbols.has(this.name)){
@@ -278,20 +292,18 @@ class func{
 	}
 }
 
-class condition{
+class condition extends astNode{
 	constructor(name,condition){
+		super(name.start,condition.end);
 		this.name=name;
 		this.condition=condition;
 	}
 	calc(symbols){
-		return {
-			name:this.name,
-			value:this.condition.calc(symbols)
-		};
+		return this.condition.calc(symbols);
 	}
 	stringify(h=0){
 		return [
-			" ".repeat(h)+name+'=',
+			" ".repeat(h)+name.name+'=',
 			this.condition.stringify(h+1)
 		].join('\n');
 		
@@ -381,10 +393,10 @@ class rule{
 		if(symbols.has(this.currstate.name)){
 			throw redefinitionError(this.currstate,symbols.get(this.currstate.name));
 		}
-		symbols.set(this.currstate.name,{
+		symbols.set(this.currstate.name.name,{
 			type:"integer",
 			value:undefined
-		}).set(this.currchar.name,{
+		}).set(this.currchar.name.name,{
 			type:"integer",
 			value:undefined
 		})
@@ -401,27 +413,27 @@ class rule{
 			throw "invalid type of new char in "+this.stringify();
 		}
 		this.move.typing(symbols)
-		symbols.delete(this.currstate.name)
-		symbols.delete(this.currchar.name);
+		symbols.delete(this.currstate.name.name)
+		symbols.delete(this.currchar.name.name);
 	}
 	*getGenerator(symbols){
-		if(this.currchar.name==this.currstate.name && this.currchar.name){
+		if(this.currchar.name.name==this.currstate.name.name && this.currchar.name.name){
 			throw new redefinitionError(this.currstate.name,this.currchar.name);
 		}
 		try{
 			let chars=this.currchar.calc(symbols);
-				symbols.set(this.currstate.name,{
+				symbols.set(this.currstate.name.name,{
 					type:"integer",
 					value:undefined
-				}).set(this.currchar.name,{
+				}).set(this.currchar.name.name,{
 					type:"integer",
 					value:undefined
 				});
-			for(let chr of chars.value){
-				symbols.get(this.currchar.name).value=chr;
+			for(let chr of chars){
+				symbols.get(this.currchar.name.name).value=chr;
 				let states=this.currstate.calc(symbols)
-				for(let state of states.value){
-					symbols.get(this.currstate.name).value=state;
+				for(let state of states){
+					symbols.get(this.currstate.name.name).value=state;
 					yield {
 						chr:chr,
 						state:state,
@@ -432,29 +444,29 @@ class rule{
 				}
 			}
 		}catch(e){
-			if(e instanceof undeclaredIdentifierError && e.identifier.name==this.currstate.name){//if tape condition require to know state value
+			if(e instanceof undeclaredIdentifierError && e.identifier.name==this.currstate.name.name){//if tape condition require to know state value
 				let states
 				try{
 					states=this.currstate.calc(symbols)
 				}catch(e){
-					if(e instanceof undeclaredIdentifierError && e.identifier.name==this.currchar.name){//if tape condition and state condition require each other
+					if(e instanceof undeclaredIdentifierError && e.identifier.name==this.currchar.name.name){//if tape condition and state condition require each other
 						throw new cyclicDepandancyError(this.currstate,this.currchar);
 					}else {
 						throw e;
 					}
 				}
-				symbols.set(this.currstate.name,{
+				symbols.set(this.currstate.name.name,{
 					type:"integer",
 					value:undefined
-				}).set(this.currchar.name,{
+				}).set(this.currchar.name.name,{
 					type:"integer",
 					value:undefined
 				})
-				for(let state of states.value){
-					symbols.get(this.currstate.name).value=state;
+				for(let state of states){
+					symbols.get(this.currstate.name.name).value=state;
 					let chars=this.currchar.calc(symbols)
-					for(let chr of chars.value){
-						symbols.get(this.currchar.name).value=chr;
+					for(let chr of chars){
+						symbols.get(this.currchar.name.name).value=chr;
 						yield {
 							chr:chr,
 							state:state,
@@ -469,8 +481,8 @@ class rule{
 			}
 		}
 		
-		symbols.delete(this.currstate.name)
-		symbols.delete(this.currchar.name);
+		symbols.delete(this.currstate.name.name)
+		symbols.delete(this.currchar.name.name);
 	}
 }
 

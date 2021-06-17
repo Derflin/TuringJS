@@ -77,7 +77,7 @@ class redefinitionError extends compilingError{
 
 class cyclicDepandancyError extends compilingError{
 	constructor(state,char){
-		let message=" '"+state.name+"' and '"+char.name+"' require to know each another, now no one is known.";
+		let message=" '"+state.name.name+"' and '"+char.name.name+"' require to know each another, now no one is known.";
 		super(char.start||["don't suported","don't suported"],state.end||["don't suported","don't suported"],"cyclicDepandancy",message);
 		this.state=state;
 		this.char=char;

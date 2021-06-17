@@ -188,12 +188,12 @@ function compile(){
 		}else{
 			throw e;
 		}
-		setTimeout(() => {
-			document.getElementById("loaderDiv").setAttribute("hidden", true);
-		},0);
 	}finally{
 		setTimeout(() => {
 			turing.enableElements();
+		},0);
+		setTimeout(() => {
+			document.getElementById("loaderDiv").setAttribute("hidden", true);
 		},0);
 	}
 		

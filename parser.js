@@ -91,15 +91,19 @@ class parser{
 				}
 			break;
 			default:
+				let tokenName=this.curr;
 				let name=this.test("identifier");
 				this.test("=");
+				let tokenValue=this.curr;
 				let value=this.test("integer");
 				if(symbols.has(name)){
 					throw this.error("Redefinition of "+name+".");
 				}
 				symbols.set(name,{
 					type:"integer",
-					value:value
+					value:value,
+					start:tokenName.start,
+					end:tokenValue.end
 				});
 			}
 		}
@@ -173,7 +177,7 @@ class parser{
 		}
 		
 		if(this.curr[0]=="identifier"){
-			let dim=this.curr[1];
+			let dim=identifier.fromToken(this.curr);
 			this.next();
 			let directions=[],steps=[];
 			switch(this.curr[0]){
@@ -181,7 +185,7 @@ class parser{
 				case'-':
 					[directions,steps]=this.secondmove();
 			}
-			directions.push(new identifier(dim));
+			directions.push(dim);
 			steps.push(new integer(step));
 			return new move(directions,steps);
 		}else{
@@ -206,7 +210,7 @@ class parser{
 			this.next();
 		}
 		if(this.curr[0]=="identifier"){
-			let dim=this.curr[1];
+			let dim=identifier.fromToken(this.curr);
 			this.next();
 			let directions=[],steps=[];
 			switch(this.curr[0]){
@@ -214,7 +218,7 @@ class parser{
 				case'-':
 					[directions,steps]=this.secondmove();
 			}
-			directions.push(new identifier(dim));
+			directions.push(dim);
 			steps.push(new integer(step));
 			return [directions,steps];
 		}else{
@@ -233,7 +237,9 @@ class parser{
 			case"integer":
 				return new integer(this.test("integer"));
 			case"identifier":
-				return new identifier(this.test("identifier"));
+				a=identifier.fromToken(this.curr);
+				this.next();
+				return a ;
 			case'(':
 				this.next();
 				a = this.expression();
@@ -386,13 +392,14 @@ class parser{
 		case"identifier":
 			switch(this.ahead[1][0]){
 			case"=":
-				name=this.test("identifier");
+				name=identifier.fromToken(this.curr);
+				this.test("identifier");
 				this.next();//skip =
 				expr=this.expression();
 				return new condition(name,expr);
 			}
 		}
-		name="";
+		name=new identifier("");
 		expr=this.expression();
 		return new condition(name,expr);
 	}
