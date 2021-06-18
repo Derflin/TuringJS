@@ -259,26 +259,22 @@ class parser{
 					return new set();
 				}
 				do{
-					set.push(this.expression());
+					set.push(this.expression0());
 				}while(this.match(','));
 				this.test('}');
 				return new union(set);
 			case'-':
 				this.next();
-				f=(a)=>-a;
+				a=new lop('-',this.expression0());
 				break;
 			case'~':
 				this.next();
-				f=(a)=>~a;
-				break;
-			case'!':
-				this.next();
-				f=(a)=>!a;
+				a=new lop('~',this.expression0());
 				break;
 			default:
 				return a;
 			}
-			a=new func(f,[this.expression()]);
+			//a=new func(f,[this.expression()]);
 		}while(true);
 	}
 	expression0_1(){// \ `

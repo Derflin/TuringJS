@@ -33,35 +33,26 @@ for(let op of operators){
 	}
 }
 }
-let monops=[];
+let lops=[];//JS have only prefix unary operators
 {
 let operators=["-","~","!"];
 let types=["integer","set"];
-let funformat={/* sign + is replaced by other operators*/
-	prefix:{
-		integer:"(a)=>+a",
-		set:"(a)=>new Set([...a].map((a)=>+a))"
-	},
-	postfix:{
-		integer:"(a)=>a+",
-		set:"(a)=>new Set([...a].map((a)=>a+))"
-	}
+let funformat={
+	integer:"(a)=>+a",
+	set:"(a)=>new Set([...a].map((a)=>+a))"
 }
 for(let op of operators){
-	monops[op]={}
-	for(let pos of ["prefix"]){
-		monops[op][pos]={}
-		for(let arg of types){
-			let f=eval(funformat[pos][arg].replaceAll('+',op));//safety because user have no access to funformat and operators
-			f.name=op;
-			monops[op][pos][arg]=f;
-		}
+	lops[op]={}
+	for(let arg of types){
+		let f=eval(funformat[arg].replaceAll('+',op));//safety because user have no access to funformat and operators
+		f.name=op;
+		lops[op][arg]=f;
 	}
 }
 }
 
 
-class binop{
+class binop{//binary operator
 	constructor(op,arg1,arg2){
 		this.arg1=arg1;
 		this.arg2=arg2;
@@ -90,11 +81,10 @@ class binop{
 		throw "wrong type for "+op+".";
 	}
 }
-class monop{
-	constructor(op,pos,arg){
+class lop{//perfix unary operator
+	constructor(op,arg){
 		this.arg=arg;
 		this.op=op;
-		this.pos=pos;
 	}
 	stringify(h=0){
 		return [
@@ -108,7 +98,7 @@ class monop{
 	}
 	typing(symbols){
 		let type=this.arg.typing(symbols);
-		this.f=monops[this.op][this.pos][type];
+		this.f=lops[this.op][type];
 		if(type=="integer"){
 			return "integer";
 		}else if(type=="set"){//if both are set or one is set and another is integer
