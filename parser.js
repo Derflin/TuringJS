@@ -281,8 +281,24 @@ class parser{
 			a=new func(f,[this.expression()]);
 		}while(true);
 	}
-	expression1(){// **
+	expression0_1(){// \ '
 		let a=this.expression0();
+		let b;
+		do{
+			switch(this.curr[0]){
+			case"\\":
+				this.next();
+				 b=this.expression0();
+				a= new difference(a,b);
+				break;
+			default:
+				return a;
+			}
+		}while(true);
+		
+	}
+	expression1(){// **
+		let a=this.expression0_1();
 		let b;
 		do{
 			switch(this.curr[0]){

@@ -60,26 +60,6 @@ class lexer{
 	throwUnexpectedCharacter(expected){
 		throw new unexpectedCharacterError([this.line,this.column,this.pos],this.curr,expected);
 	}
-	/*
-	Token		value
-	(			
-	)			
-	,	
-	=>
-	integer		integer reprezantation of number
-	identifier	string representation of name
-	eof
-			
-			
-			
-			
-			
-			
-			
-			
-			
-	
- 	*/
 	startToken(){
 		return this.starttoken=[this.line,this.column,this.pos];
 	}
@@ -163,6 +143,7 @@ class lexer{
 			case'&'://operator
 			case'|'://operator
 			case'^'://operator
+			case'\\'://operator
 				return this.match(this.curr);
 			break;
 			case'='://=>

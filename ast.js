@@ -144,6 +144,45 @@ class union{
 		return "set";
 	}
 }
+class difference{
+	constructor(first,second){
+		this.first=first
+		this.second=second
+	}
+	
+	calc(symbols){
+		let f= this.first.calc(symbols);
+		let s= this.second.calc(symbols);
+		if(f.size>s.size){
+			s.forEach((v)=>{
+				f.delete(v);
+			});
+		}else{
+			f.forEach((v)=>{
+				if(s.has(v)){
+					f.delete(v);
+				}
+			})
+		}
+		return f;
+	}
+	stringify(h=0){
+		return [
+			" ".repeat(h)+"\\\n",
+			this.first.stringify(h+1),
+			this.last.stringify(h+1)
+		].join('\n');
+	}
+	typing(symbols){
+		if(this.first.typing(symbols)!="set"){
+			this.first=new func((a)=> new Set([a]),[this.first]);
+		}
+		if(this.second.typing(symbols)!="set"){
+			this.second=new func((a)=> new Set([a]),[this.second]);
+		}
+		return "set";
+	}
+}
 class range{
 	constructor(first,last){
 		this.first=first
