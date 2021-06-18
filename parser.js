@@ -281,7 +281,7 @@ class parser{
 			a=new func(f,[this.expression()]);
 		}while(true);
 	}
-	expression0_1(){// \ '
+	expression0_1(){// \ `
 		let a=this.expression0();
 		let b;
 		do{
@@ -290,6 +290,16 @@ class parser{
 				this.next();
 				 b=this.expression0();
 				a= new difference(a,b);
+				break;
+			case"`":
+				this.next();
+				 b=this.expression0();
+				a= new intersect(a,b);
+				break;
+			case"``":
+				this.next();
+				 b=this.expression0();
+				a= new symetricdifference(a,b);
 				break;
 			default:
 				return a;

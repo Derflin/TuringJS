@@ -130,6 +130,16 @@ class lexer{
 						return this.createToken(">");
 				}
 			break;
+			case'`'://operators ` ``
+				this.next();
+				switch(this.curr){
+				case'`':
+					this.next();
+					return this.createToken("``");
+				default:
+					return this.createToken("`");
+				}
+			break;
 			case'(':
 			case')':
 			case'{':
