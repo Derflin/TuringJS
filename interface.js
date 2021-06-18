@@ -223,7 +223,7 @@ function printActualRule(ruleSet, curState, curChar){
 		move[1] = 0;
 	}
 
-	return '(' + startLetter + ',' + curState + ")=>(" + endLetter + ',' + ruleSet[0] + ",[" + move + '])';
+	return '(' + startLetter + ',' + curState + ")=>(" + endLetter + ',' + ruleSet[0] + ")+[" + move + ']';
 }
 //go to error in input code
 function selectInputTextArea(element,start,end){
