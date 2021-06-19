@@ -1,4 +1,9 @@
-**Wprowadzone zmiany**
+**Introduction**
+**Requirements**
+**Usage**
+**Rule syntax**
+
+**Changes**
 * v8
     * naprawienie oznaczenia aktywnego pola po kliknięciu na taśmę (display.js 171, 172)
     * naprawienie braku wyświetlania się komunikatu końcowego po wykonaniu programu (turing.js 153, if wykrywa teraz jednoelementową tablicę ruchu)
