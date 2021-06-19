@@ -213,7 +213,7 @@ function showOutputCode(code){
 	outputArea.textContent=buffor.join('\t')
 }
 
-function printActualRule(ruleSet, curState, curChar){
+function printActualRule(ruleSet, curState, curChar,dbg){
 	var startLetter = String.fromCharCode(curChar); // zamiana int na char dla aktualnej litery
 	var endLetter = ruleSet[1];  // odczytanie litery docelowej
 	var endCharCode = endLetter.charCodeAt(0); // odczytanie kodu litery docelowej
@@ -229,9 +229,10 @@ function printActualRule(ruleSet, curState, curChar){
 		move[1] = 0;
 	}
 	
-	let dbginf=(dbg[curState]&&dbg[curState]!=curState)?'🠔'+dbg[curState]:"";
+	let dbginf1=(dbg && dbg[curState] && dbg[curState]!=curState)?'🠔'+dbg[curState]:"";
+	let dbginf2=(dbg && dbg[ruleSet[0]] && dbg[ruleSet[0]]!=ruleSet[0])?'🠔'+dbg[ruleSet[0]]:"";
 	
-	return '(' + startLetter + ',' + curState + dbginf + ")=>(" + endLetter + ',' + ruleSet[0] + ",[" + move + '])';
+	return '(' + startLetter + ',' + curState + dbginf1 + ")=>(" + endLetter + ',' + ruleSet[0] + dbginf1 + ")+[" + move + ']';
 }
 //go to error in input code
 function selectInputTextArea(element,start,end){

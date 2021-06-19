@@ -4,6 +4,8 @@ function rangeStates(transit){
 	let mask=[];
 	let dbg=[]
 	
+	newtransit=[transit[0]];
+	
 	transit.forEach((chars,state)=>{
 		newtransit[free]=chars;
 		mask[state]=free;
