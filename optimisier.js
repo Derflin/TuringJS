@@ -1,21 +1,13 @@
-function restate(transit){
+function rangeStates(transit){
 	let newtransit=[];
 	let free=0;
-	let mask=[]
-/*
-	let r=(state,char,effect)=>{
-		mask[state]=newtransit.length;
-		if(!newtransit[char]){
-			newtransit[char]=[];
-		}
-		newtransit[char]=effect;
-		delete transit[effect[0]][effect[1]];
-	}
-//*/
-//*
+	let mask=[];
+	let dbg=[]
+	
 	transit.forEach((chars,state)=>{
 		newtransit[free]=chars;
 		mask[state]=free;
+		dbg[free]=state;
 		free++;
 	});
 	newtransit.forEach((chars,state)=>{
@@ -25,5 +17,5 @@ function restate(transit){
 		})			
 	})
 	transit.length=free;
-//*/
+	return dbg;
 }

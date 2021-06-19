@@ -33,17 +33,7 @@ class assembler{
 			
 			
 		}
-		let sparsesize=0;
-		this.code.forEach((c)=> c.forEach(()=>++ sparsesize));
 		console.log("Full array fill ratio: "+Number(rules)/Number((maxchar+1n)*(maxstate+1n)));
-		console.log("Sparse array fill ratio: "+Number(rules)/sparsesize);
-		
-		restate(this.code);
-		
-		sparsesize=0;
-		this.code.forEach((c)=> c.forEach(()=>++ sparsesize));
-		console.log("Full array fill ratio: "+Number(rules)/Number((maxchar+1n)*(maxstate+1n)));
-		console.log("Sparse array fill ratio: "+Number(rules)/Number((maxchar+1n)*(maxstate+1n)));
 		return this.code;
 	}
 	

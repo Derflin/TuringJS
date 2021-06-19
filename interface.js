@@ -149,6 +149,7 @@ canvas.addEventListener('click', (event)=>display.canvasOnMouseClick(event), fal
 document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), false);
 
 //compiling code
+let dbg=[];
 function compile(){
 	var compileCheck = document.getElementById("compileCheckBox");
 	document.getElementById("loaderDiv").removeAttribute("hidden");
@@ -158,7 +159,12 @@ function compile(){
 
 	try{
 		console.time("Compilation");
-		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
+		let [code] = new Compiler(lexer,parser,assembler).compile(program);
+		if(document.getElementById("rangeStatesCheckBox").checked){
+			dbg=rangeStates(code);
+		}else{
+			dbg=[];
+		}
 		console.timeEnd("Compilation");
 		turing.changeTransit(code);
 
@@ -222,8 +228,10 @@ function printActualRule(ruleSet, curState, curChar){
 	if(move.length == 1){ // w przypadku, gdy tablica ruchu jest jednoelementowa, dodaj element (estetyczne)
 		move[1] = 0;
 	}
-
-	return '(' + startLetter + ',' + curState + ")=>(" + endLetter + ',' + ruleSet[0] + ",[" + move + '])';
+	
+	let dbginf=(dbg[curState]&&dbg[curState]!=curState)?'🠔'+dbg[curState]:"";
+	
+	return '(' + startLetter + ',' + curState + dbginf + ")=>(" + endLetter + ',' + ruleSet[0] + ",[" + move + '])';
 }
 //go to error in input code
 function selectInputTextArea(element,start,end){

@@ -490,11 +490,11 @@ class rule{
 		].join('\n')
 	}
 	typing(symbols){
-		if(symbols.has(this.currchar.name)){
-			throw redefinitionError(this.currchar,symbols.get(this.currchar.name));
+		if(symbols.has(this.currchar.name.name)){
+			throw new redefinitionError(this.currchar.name,symbols.get(this.currchar.name.name));
 		}
-		if(symbols.has(this.currstate.name)){
-			throw redefinitionError(this.currstate,symbols.get(this.currstate.name));
+		if(symbols.has(this.currstate.name.name)){
+			throw new redefinitionError(this.currstate.name,symbols.get(this.currstate.name.name));
 		}
 		symbols.set(this.currstate.name.name,{
 			type:"integer",
