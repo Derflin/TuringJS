@@ -33,27 +33,17 @@ class assembler{
 			
 			
 		}
-		/*if(rules!=code.length*code[0].length){//todo: correct!
-			for(let chr=0;i<this.AST.getMaxChar();++i){
-				if(code[i]==undefined)
-					code[i]=[];
-				for(let j=0;j<this.AST.getMaxState();++j)
-					if(code[i][j]==undefined)
-						code[i][j]==[i,j,[0,0]]
-			}
-		}*/
-		/*
-		if(rules!=(AST.getMaxChar()+1)*(AST.getMaxState()+1)){
-			for(let chr=0;i<this.AST.getMaxChar();++i){
-				if(code[i]==undefined)
-					throw "there is no definition for character "+ i +"('"+String.fromCharCode(i)+"')."
-				for(let j=0;j<this.AST.getMaxState();++j)
-					if(code[i][j]==undefined)
-						throw "there is no definition for state "+ j+ "for char "+ i +"('"+String.fromCharCode(i)+"')."
-			}
-			throw ""
-		}
-		*/
+		let sparsesize=0;
+		this.code.forEach((c)=> c.forEach(()=>++ sparsesize));
+		console.log("Full array fill ratio: "+Number(rules)/Number((maxchar+1n)*(maxstate+1n)));
+		console.log("Sparse array fill ratio: "+Number(rules)/sparsesize);
+		
+		restate(this.code);
+		
+		sparsesize=0;
+		this.code.forEach((c)=> c.forEach(()=>++ sparsesize));
+		console.log("Full array fill ratio: "+Number(rules)/Number((maxchar+1n)*(maxstate+1n)));
+		console.log("Sparse array fill ratio: "+Number(rules)/Number((maxchar+1n)*(maxstate+1n)));
 		return this.code;
 	}
 	
