@@ -15,7 +15,11 @@ It was tested on such web browsers as Chrome, Firefox and Microsoft Edge.
 
 ## Usage
 
-Main file containing the implementation is the file "index.html". It lets user to work with simulation of Turing Machine with two-dimensional (2d) tape and allows him to interact with it. The default state of machine, after starting it up (button "Start") is state numbered "0". Field "Insert Data" lets user to write his own data on the tape (button "Insert" under the field), while the field "Program" lets him to write his own set of rules (button "Compile" under the field). While writing data on the tape, the newline character causes to change current row on tape, into which data is being written. For both of these functions, file provides default values for tape and set of rules, which provides the functionality of sorting the words available on the tape (bubble sort). User, while the Turing Machine is not working or is stopped, can traverse and check what is written on tape by using directional keys on keyboard or the corresponding buttons ("Up", "Down", "Left" and "Right") which causes the move of currently visible area of the tape. 
+Main file containing the implementation is the file "index.html". It lets user to work with simulation of Turing Machine with two-dimensional (2d) tape and allows him to interact with it. 
+
+The default state of machine, after starting it up (button "Start") is state numbered "0". Field "Insert Data" lets user to write his own data on the tape (button "Insert" under the field), while the field "Program" lets him to write his own set of rules (button "Compile" under the field). While writing data on the tape, the newline character causes to change current row on tape, into which data is being written. For both of these functions, file provides default values for tape and set of rules, which provides the functionality of sorting the words available on the tape (bubble sort). 
+
+User, while the Turing Machine is not working or is stopped, can traverse and check what is written on tape by using directional keys on keyboard or the corresponding buttons ("Up", "Down", "Left" and "Right") which causes the move of currently visible area of the tape. 
 
 ![image](https://user-images.githubusercontent.com/76527849/122673164-884b3e00-d1cf-11eb-9496-4c0cae55e8e2.png)
 
@@ -51,6 +55,8 @@ Each rule is constructed according to the following syntax:
    * use identifiers to operate on actual values - (**@='A'**,**S=**300)=>(**@**,**S**+20)-y
    * use intervals - (@=**<'A','Z'>**,7)=>(@,0)
    * use unions - ('*',**{2,4,6,8}**)=>(0,3)-y
+
+   Every usage shown above can be combined with each other - (**@={<'A','Z'>,<'a','z'>}**,7)=>(**@**,0)
 
 * **[charExpression]** and **[stateExpression]** operate on the same syntax, where user can (except providing a value or identifier):
 
