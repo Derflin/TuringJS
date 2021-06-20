@@ -18,6 +18,7 @@ It was tested on such web browsers as Chrome, Firefox and Microsoft Edge.
 Main file containing the implementation is the file "index.html". It lets user to work with simulation of Turing Machine with two-dimensional (2d) tape and allows him to interact with it. The default state of machine, after starting it up (button "Start") is state numbered "0". Field "Insert Data" lets user to write his own data on the tape (button "Insert" under the field), while the field "Program" lets him to write his own set of rules (button "Compile" under the field). While writing data on the tape, the newline character causes to change current row on tape, into which data is being written. For both of these functions, file provieds default values for tape and set of rules, which provides the functionality of sorting the words available on the tape (bubble sort). User, while the Turing Machine is not working, can traverse and check what is written on tape by using directional keys on keyboard or the corresponding buttons ("Up", "Down", "Left" and "Right") which causes the move of currently visible area of the tape. 
 
 TODO: coś piszemy o uruchomieniu kolejnych iteracji maszyny???
+TODO: coś piszemy o guziczku do ukrycia wypisywania reguł???
 
 ![image](https://user-images.githubusercontent.com/76527849/122673164-884b3e00-d1cf-11eb-9496-4c0cae55e8e2.png)
 
