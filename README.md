@@ -84,7 +84,9 @@ Each rule is constructed according to the following syntax:
 
 ## Constants
 
-Our program gives a possibility of creating constant variables. Their syntax is simple:
+Our program gives a possibility of creating constant variables. They must be declared before rules. 
+
+Constant's syntax is simple:
 
 **[identifier]=[value]**
 
