@@ -215,8 +215,8 @@ function showOutputCode(code){
 
 function printActualRule(ruleSet, curState, curChar,dbg){
 	var startLetter = String.fromCharCode(curChar); // zamiana int na char dla aktualnej litery
-	var endLetter = ruleSet[1];  // odczytanie litery docelowej
-	var endCharCode = endLetter.charCodeAt(0); // odczytanie kodu litery docelowej
+	var endCharCode = ruleSet[1];  // odczytanie litery docelowej
+	var endLetter = String.fromCharCode(Number(endCharCode)); // odczytanie kodu litery docelowej
 	var move = ruleSet[2]; // odczytanie tablicy ruchu
 
 	if(curChar < 65 || curChar > 122){ // w przypadku, gdy j nie jest literą, wyświetl int

@@ -14,7 +14,7 @@ class assembler{
 			}
 			if(this.code[rule.state][rule.chr]!= undefined)
 				throw "redefinition"
-			this.code[rule.state][rule.chr]=[rule.newchar,String.fromCharCode(Number(rule.newstate)),rule.move.map((step)=>Number(step))];
+			this.code[rule.state][rule.chr]=[rule.newchar,rule.newstate,rule.move.map((step)=>Number(step))];
 			++rules;
 			
 			if(maxstate<rule.state){

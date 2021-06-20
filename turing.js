@@ -161,7 +161,7 @@ class Turing {
 
                 //aktualizacja stanu i litery
                 display.changeState(newState);
-                display.changeChar(newChar);
+                display.changeChar(String.fromCharCode(Number(newChar)));
     
                 setTimeout(() => { //czekanie przed ruchem (długość zależna od ustawionej prędkości animacji)
                     if(move.length == 2){ // ruch dla pełnej tablicy ruchu
