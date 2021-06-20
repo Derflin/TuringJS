@@ -61,18 +61,21 @@ Each rule is constructed according to the following syntax:
 * **[charExpression]** and **[stateExpression]** operate on the same syntax, where user can (except providing a value or identifier):
 
    * do basic mathematical nad logical operations, such as
-      * addition - (@=<0,10>,3)=>(**@+30**,14)+x
-      * subtraction - (0,S={2,5,6,20})=>(0,**S-10**)+x-y
-      * multipication - (@={<'A','Z'>},S=<420,449>)=>(@,**S\*5**)
-      * division without rest - (@={<'a','z'>},S=<20,50>)=>(@,**S/5**)
-      * division with rest - (@={'e','g'},S=<100,150>)=>(@,**S%3**)
-      * bit negation - (0,S=<101,160>)=>(**~S**,200)-y
-      * bit conjunction - (@=<10,60>,S=<30,160>)=>(S,**@&S**)+y
-      * bit alternative - (@=10,S=<2,8>)=>(@,**S|5**)-x
-      * bit negative alternative - (@={1,3,5,7},S=25)=>(S,**@^3**)-y+x
-      * exponentiation - (@={'^','*'},S=<1,10>)=>(**S\*\*2**,100)-y-x
-      * left-hand bit shift - (@='<',S=<8,16>)=>(@,**S<<3**)+x
-      * right-hand bit shift - (@='>',S=<64,124>)=>(@,**S>>4**)-y
+      * addition '+' - (@=<0,10>,3)=>(**@+30**,14)+x
+      * subtraction '-' - (0,S={2,5,6,20})=>(0,**S-10**)+x-y
+      * multipication '*' - (@={<'A','Z'>},S=<420,449>)=>(@,**S\*5**)
+      * division without rest '/' - (@={<'a','z'>},S=<20,50>)=>(@,**S/5**)
+      * division with rest '%' - (@={'e','g'},S=<100,150>)=>(@,**S%3**)
+      * bit negation '~' - (0,S=<101,160>)=>(**~S**,200)-y
+      * bit conjunction '&' - (@=<10,60>,S=<30,160>)=>(S,**@&S**)+y
+      * bit alternative '|' - (@=10,S=<2,8>)=>(@,**S|5**)-x
+      * bit negative alternative '^' - (@={1,3,5,7},S=25)=>(S,**@^3**)-y+x
+      * exponentiation '\*\*' - (@={'^','*'},S=<1,10>)=>(**S\*\*2**,100)-y-x
+      * left-hand bit shift '<<' - (@='<',S=<8,16>)=>(@,**S<<3**)+x
+      * right-hand bit shift '>>' - (@='>',S=<64,124>)=>(@,**S>>4**)-y
+      * intersection '\`' - (@={5,11,13},S=**@`{1,5,8}**)=>('s',12)
+      * symmetric difference '\`\`' - (@={1,2},**S=@``{9,15,32}**)=>(4,S-5)+x
+      * set difference '\\' - (@={7,8,11,12,13},**S=@\\{8,12,32}**)=>('a',@/5)-2y
    * do complex operations - (@=<'a','z'>,S=<301,360>)=>(@,**S-301\*(@/4)+'a'+450**)-y
 
 * **[direction]** can be either:
