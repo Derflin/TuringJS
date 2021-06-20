@@ -1,25 +1,44 @@
-**Introduction**
-**Requirements**
-**Usage**
-**Rule syntax**
+## Introduction
 
-**Changes**
-* v8
-    * naprawienie oznaczenia aktywnego pola po kliknięciu na taśmę (display.js 171, 172)
-    * naprawienie braku wyświetlania się komunikatu końcowego po wykonaniu programu (turing.js 153, if wykrywa teraz jednoelementową tablicę ruchu)
-    * przesunięcie obszaru Insert Data (index.html 67)
-    * outputCode teraz wyświetla stworzone przez kompilator reguły w czytelny dla laika sposób (interface.js 147)
-    * lekka korekta css ( w tym zakomentowanie jaskrawych kolorów tła)
-* v9
-    * ruch wielowymiaraowy
-    * usunięcie błędu przy nieciągłości stanów
-* v95
-    * uzupełnienie programu o obsługę ruchu wielowymiarowego (display.js 196 i turing.js 157)
-    * migracja na github
-* v96
-    * dodanie paska ładowania do kompilacji
-    * zmiana prezentacji sekcji Code
-    * dodanie wyświetlania aktualnie przetwarzanej reguły
-    * dodanie przycisku Reset wraz z jego funkcjonalnością
-    * aktualizacja przykładowego kodu
-    * drobne zmiany kosmetyczne
+The whole project is about implementing Turing Machine in HTML with the help of JavaScript (JS). Its goal is to allow user to simulate the work of Turing Machine with two-dimensional (2d) tape and to allow him to interact with it. Simulation provides to the user functionality such as:
+* inputting new data to tape
+* inputting new sets of rules
+* displaying the current state of the Turing Machine
+* iterating over the next steps of the Turing Machine
+* outputting the data currently residing on the tapes
+
+## Requirements
+
+The implementation was done with the usage of HTML5, CSS3 and JavaScript. 
+
+It was tested on such web browsers as Chrome, Firefox and Microsoft Edge. 
+
+## Usage
+
+
+
+## Rules
+
+During each iteration of the Turing Machine, it checks current state and character on the current position on the tape, and based on that it chooses appropriate rule from the set. The single rule (after being processed) from the set, can be represented as following:
+
+**([char],[state])=>([newchar],[newstate])+[move]**
+
+Where: TODO
+* [char]
+* [state]
+* [newchar]
+* [newstate]
+* [move]
+   
+Example:
+
+**(A,0)=>(A,1)+[0,1]**
+
+Which means: TODO
+
+## Rules Syntax
+
+TODO
+
+
+
