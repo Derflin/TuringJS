@@ -1,6 +1,6 @@
 ## Introduction
 
-The whole project is about implementing Turing Machine in HTML with the help of JavaScript (JS). Its goal is to let user to work with simulation of Turing Machine with two-dimensional (2d) tape and to allow him to interact with it. Simulation provides to the user functionality such as:
+The whole project is about implementing Turing Machine in HTML with the help of JavaScript (JS). Its goal is to let user work with simulation of Turing Machine with two-dimensional (2d) tape and to allow him to interact with it. Simulation provides to the user functionality such as:
 * inputting new data to tape
 * inputting new sets of rules
 * displaying the current state of the Turing Machine
@@ -15,15 +15,11 @@ It was tested on such web browsers as Chrome, Firefox and Microsoft Edge.
 
 ## Usage
 
-Main file containing the implementation is the file "index.html". It lets user to work with simulation of Turing Machine with two-dimensional (2d) tape and allows him to interact with it. The default state of machine, after starting it up (button "Start") is state numbered "0". Field "Insert Data" lets user to write his own data on the tape (button "Insert" under the field), while the field "Program" lets him to write his own set of rules (button "Compile" under the field). While writing data on the tape, the newline character causes to change current row on tape, into which data is being written. For both of these functions, file provieds default values for tape and set of rules, which provides the functionality of sorting the words available on the tape (bubble sort). User, while the Turing Machine is not working, can traverse and check what is written on tape by using directional keys on keyboard or the corresponding buttons ("Up", "Down", "Left" and "Right") which causes the move of currently visible area of the tape. 
-
-TODO: coś piszemy o uruchomieniu kolejnych iteracji maszyny???
-TODO: coś piszemy o guziczku do ukrycia wypisywania reguł???
+Main file containing the implementation is the file "index.html". It lets user to work with simulation of Turing Machine with two-dimensional (2d) tape and allows him to interact with it. The default state of machine, after starting it up (button "Start") is state numbered "0". Field "Insert Data" lets user to write his own data on the tape (button "Insert" under the field), while the field "Program" lets him to write his own set of rules (button "Compile" under the field). While writing data on the tape, the newline character causes to change current row on tape, into which data is being written. For both of these functions, file provides default values for tape and set of rules, which provides the functionality of sorting the words available on the tape (bubble sort). User, while the Turing Machine is not working or is stopped, can traverse and check what is written on tape by using directional keys on keyboard or the corresponding buttons ("Up", "Down", "Left" and "Right") which causes the move of currently visible area of the tape. 
 
 ![image](https://user-images.githubusercontent.com/76527849/122673164-884b3e00-d1cf-11eb-9496-4c0cae55e8e2.png)
 
-
-File "architecture.html" shows how the rules are being parsed and interpreted (step by step) by the scripts. It also contains few examples of the rules that can be used in the main file.
+File "architecture.html" shows how the rules are being parsed and interpreted (step by step) by the scripts. It also contains a few examples of the rules that can be used in the main file.
 
 ![image](https://user-images.githubusercontent.com/76527849/122673230-ba5ca000-d1cf-11eb-9e5c-2e8f834c50e0.png)
 
@@ -46,17 +42,17 @@ Example:
 **(A,0)=>(A,1)+[0,1]**
 
 ## Rules Syntax
-Each rule is constructed following syntax below:
+Each rule is constructed according to the following syntax:
 
 **([charCondition],[stateCondition])=>([charExpression],[stateExpression])[direction]**
 
-* **[charCondition]** and **[stateCondition]** operate on the same syntax, where user can (except providing a value or idnetifier):
+* **[charCondition]** and **[stateCondition]** operate on the same syntax, where user can (except providing a value or identifier):
 
    * use identifiers to operate on actual values - (**@='A'**,**S=**300)=>(**@**,**S**+20)-y
    * use intervals - (@=**<'A','Z'>**,7)=>(@,0)
    * use unions - ('*',**{2,4,6,8}**)=>(0,3)-y
 
-* **[charExpression]** and **[stateExpression]** operate on the same syntax, where user can (except providing a value or idnetifier):
+* **[charExpression]** and **[stateExpression]** operate on the same syntax, where user can (except providing a value or identifier):
 
    * do basic mathematical nad logical operations, such as
       * addition - (@=<0,10>,3)=>(**@+30**,14)+x
@@ -76,7 +72,7 @@ Each rule is constructed following syntax below:
 * **[direction]** can be either:
    * nothing when not changing position - (0,79)=>(0,300)
    * one way move - (@=<'A','Z'>,300)=>(@,449)**-y**
-   * two way (complex) move - (0,5)=>(0,7)**+x+y**
+   * two way move - (0,5)=>(0,7)**+x+y**
 
    It is also possible to move more than 1 field by placing requested number before variable - (0,99)=>(0,100)**+5y-10x**
 
