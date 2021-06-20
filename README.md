@@ -46,8 +46,53 @@ Example:
 **(A,0)=>(A,1)+[0,1]**
 
 ## Rules Syntax
+Each rule is constructed following syntax below:
 
-TODO
+**([charCondition],[stateCondition])=>([charExpression],[stateExpression])[direction]**
 
+* **[charCondition]** and **[stateCondition]** operate on the same syntax, where user can (except providing a value or idnetifier):
 
+   * use identifiers to operate on actual values - (**@='A'**,**S=**300)=>(**@**,**S**+20)-y
+   * use intervals - (@=**<'A','Z'>**,7)=>(@,0)
+   * use unions - ('*',**{2,4,6,8}**)=>(0,3)-y
+
+* **[charExpression]** and **[stateExpression]** operate on the same syntax, where user can (except providing a value or idnetifier):
+
+   * do basic mathematical nad logical operations, such as
+      * addition - (@=<0,10>,3)=>(**@+30**,14)+x
+      * subtraction - (0,S={2,5,6,20})=>(0,**S-10**)+x-y
+      * multipication - (@={<'A','Z'>},S=<420,449>)=>(@,**S\*5**)
+      * division without rest - (@={<'a','z'>},S=<20,50>)=>(@,**S/5**)
+      * division with rest - (@={'e','g'},S=<100,150>)=>(@,**S%3**)
+      * bit negation - (0,S=<101,160>)=>(**~S**,200)-y
+      * bit conjunction - (@=<10,60>,S=<30,160>)=>(S,**@&S**)+y
+      * bit alternative - (@=10,S=<2,8>)=>(@,**S|5**)-x
+      * bit negative alternative - (@={1,3,5,7},S=25)=>(S,**@^3**)-y+x
+      * exponentiation - (@={'^','*'},S=<1,10>)=>(**S\*\*2**,100)-y-x
+      * left-hand bit shift - (@='<',S=<8,16>)=>(@,**S<<3**)+x
+      * right-hand bit shift - (@='>',S=<64,124>)=>(@,**S>>4**)-y
+   * do complex operations - (@=<'a','z'>,S=<301,360>)=>(@,**S-301\*(@/4)+'a'+450**)-y
+
+* **[direction]** can be either:
+   * nothing when not changing position - (0,79)=>(0,300)
+   * one way move - (@=<'A','Z'>,300)=>(@,449)**-y**
+   * two way (complex) move - (0,5)=>(0,7)**+x+y**
+
+   It is also possible to move more than 1 field by placing requested number before variable - (0,99)=>(0,100)**+5y-10x**
+
+## Constants
+
+Our program gives a possibility of creating constant variables. Their syntax is simple:
+
+**[identifier]=[value]**
+
+Where:
+* [identifier] - custom character or string starting with letter
+* [value] - chosen value
+
+After declaring constant variables they can be used in rules:
+
+**var = 9**
+&nbsp;\
+(@=<'a','z'>,**S=var**)=>(@,**var+5**)-y
 
