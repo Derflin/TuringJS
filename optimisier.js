@@ -14,7 +14,7 @@ function rangeStates(transit){
 	});
 	newtransit.forEach((chars,state)=>{
 		chars.forEach((effect,char)=>{
-			effect[0]=mask[effect[0]];
+			effect[0]=mask[effect[0]]??free;
 			transit[state]=newtransit[state];
 		})			
 	})
