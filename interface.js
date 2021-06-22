@@ -151,7 +151,11 @@ document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), f
 //compiling code
 let dbg=[];
 function compile(){
-	var compileCheck = document.getElementById("compileCheckBox");
+	//get compiling options
+	let compileCheck = document.getElementById("compileCheckBox");
+	let option_unrechable=document.getElementById("unrechableStatesCheckBox").checked,
+		option_arrange=document.getElementById("arrangeStatesCheckBox").checked,
+		option_misleading=document.getElementById("misleadingStatesCheckBox").checked;
 	document.getElementById("loaderDiv").removeAttribute("hidden");
 	turing.disableElements();
 	
@@ -160,23 +164,27 @@ function compile(){
 	try{
 		console.time("Compilation");
 		let [code] = new Compiler(lexer,parser,assembler).compile(program);
-		if(document.getElementById("rangeStatesCheckBox").checked){
-			console.time("Compilation");
-			dbg=rangeStates(code);
-			let rules=0,maxstate=code.length,maxchar=0;
-			code.forEach((chars,state)=>{
-				chars.forEach((effect,char)=>{
-					rules++;
-					maxchar=Math.max(maxchar,char);
-				})
-			});
-				
-			console.log("Array fill ratio afrer state arrange"+rules/((maxchar+1)*(maxstate+1)));
-			console.timeEnd("Compilation");
-		}else{
-			dbg=[];
-		}
 		console.timeEnd("Compilation");
+		let optimisationList=[]
+		if(option_arrange){
+				optimisationList.push(rangeStates);
+		}
+		if(option_unrechable){
+				optimisationList.push(removeUnreacableStates);
+		}
+		if(option_misleading){
+				optimisationList.push(removeMisleading);
+		}
+		dbg=applyCodeOptimisations(code,optimisationList);
+		let rules=0,maxstate=code.length-1,maxchar=0;
+		code.forEach((chars,state)=>{
+			chars.forEach((effect,char)=>{
+				rules++;
+				maxchar=Math.max(maxchar,char);
+			})
+		});
+		console.log("Array fill ratio afrer state arrange"+rules/((maxchar+1)*(maxstate+1)));
+		
 		turing.changeTransit(code);
 
 		if(compileCheck.checked == true){
