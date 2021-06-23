@@ -3,10 +3,16 @@
 	- initial state
 		state 0
 		state which Turing machine start
+		!immovable
 	- unrechable state
 		state which never be used, because the path betwen the state and initial state doesn't exist
+		!eraseable
+		!shouldn't exist
 	- misleading state
 		state which doesn't exist, have no defined rules or all the next state are misleading
+		!shouldn't exist
+	- dead state
+		state from which doesn't exist path to final state
 
 	kinds of rules:
 	- static rule
@@ -53,12 +59,12 @@ function removeUnreacableStates(transit){
 */
 	let newtransit=[transit[0]];
 	let free=1;
-	let mask=[];
-	let dbg=[]
+	let mask=[0];
+	let dbg=[0]
 	
 	delete transit[0];
-	for(let i=0;i<newtransit.length;++i){
-		newtransit[i].forEach((effect,char)=>{
+	for(let newstate=0;newstate<newtransit.length;++newstate){
+		newtransit[newstate].forEach((effect,char)=>{
 			let state=effect[0]
 			if(transit[state]){
 				newtransit[free]=transit[state];
@@ -119,6 +125,18 @@ removeMisleading.moveCorrectStates=(rulesSrc,state,rulesDst)=>{
 		}
 		return true;
 	}
+}
+
+
+function getClass(state,invertTransit){
+	let [newstate,newchar,move]=transit;
+	
+	let transitClass=invertTransit;	
+	move.forEach((step,dimension)=>{
+		steps=steps[step];
+	})
+	transitClass=transitClass[newchar];
+	
 }
 
 function applyCodeOptimisations(code,optimalisationList){
