@@ -97,7 +97,7 @@ class parser{
 				let tokenValue=this.curr;
 				let value=this.test("integer");
 				if(symbols.has(name)){
-					throw this.error("Redefinition of "+name+".");
+					throw new redefinitionError(tokenName,symbols.get(name));
 				}
 				symbols.set(name,{
 					type:"integer",
@@ -227,7 +227,11 @@ class parser{
 	}
 	
 	expression(){
-		return this.expression5();
+		let exp = this.expression5();
+		if(exp){
+			return exp;
+		}
+		this.throwUnexpectedToken("expression");
 	}
 	
 	expression0(){//integer,identifier,(),unary - ~ !

@@ -149,8 +149,13 @@ canvas.addEventListener('click', (event)=>display.canvasOnMouseClick(event), fal
 document.addEventListener('keypress', (event)=>display.canvasOnKeyDown(event), false);
 
 //compiling code
+let dbg=[];
 function compile(){
-	var compileCheck = document.getElementById("compileCheckBox");
+	//get compiling options
+	let compileCheck = document.getElementById("compileCheckBox");
+	let option_unrechable=document.getElementById("unrechableStatesCheckBox").checked,
+		option_arrange=document.getElementById("arrangeStatesCheckBox").checked,
+		option_misleading=document.getElementById("misleadingStatesCheckBox").checked;
 	document.getElementById("loaderDiv").removeAttribute("hidden");
 	turing.disableElements();
 	
@@ -158,8 +163,28 @@ function compile(){
 
 	try{
 		console.time("Compilation");
-		let [code,dbg] = new Compiler(lexer,parser,assembler).compile(program);
+		let [code] = new Compiler(lexer,parser,assembler).compile(program);
 		console.timeEnd("Compilation");
+		let optimisationList=[]
+		if(option_arrange){
+				optimisationList.push(rangeStates);
+		}
+		if(option_unrechable){
+				optimisationList.push(removeUnreacableStates);
+		}
+		if(option_misleading){
+				optimisationList.push(removeMisleading);
+		}
+		dbg=applyCodeOptimisations(code,optimisationList);
+		let rules=0,maxstate=code.length-1,maxchar=0;
+		code.forEach((chars,state)=>{
+			chars.forEach((effect,char)=>{
+				rules++;
+				maxchar=Math.max(maxchar,char);
+			})
+		});
+		console.log("Array fill ratio afrer state arrange"+rules/((maxchar+1)*(maxstate+1)));
+		
 		turing.changeTransit(code);
 
 		if(compileCheck.checked == true){
@@ -207,7 +232,7 @@ function showOutputCode(code){
 	outputArea.textContent=buffor.join('\t')
 }
 
-function printActualRule(ruleSet, curState, curChar){
+function printActualRule(ruleSet, curState, curChar,dbg){
 	var startLetter = String.fromCharCode(curChar); // zamiana int na char dla aktualnej litery
 	var endLetter = ruleSet[1];  // odczytanie litery docelowej
 	var endCharCode = endLetter.charCodeAt(0); // odczytanie kodu litery docelowej
@@ -222,8 +247,11 @@ function printActualRule(ruleSet, curState, curChar){
 	if(move.length == 1){ // w przypadku, gdy tablica ruchu jest jednoelementowa, dodaj element (estetyczne)
 		move[1] = 0;
 	}
-
-	return '(' + startLetter + ',' + curState + ")=>(" + endLetter + ',' + ruleSet[0] + ")+[" + move + ']';
+	
+	let dbginf1=(dbg && dbg[curState] && dbg[curState]!=curState)?'🠔'+dbg[curState]:"";
+	let dbginf2=(dbg && dbg[ruleSet[0]] && dbg[ruleSet[0]]!=ruleSet[0])?'🠔'+dbg[ruleSet[0]]:"";
+	
+	return '(' + startLetter + ',' + curState + dbginf1 + ")=>(" + endLetter + ',' + ruleSet[0] + dbginf1 + ")+[" + move + ']';
 }
 //go to error in input code
 function selectInputTextArea(element,start,end){

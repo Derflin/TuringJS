@@ -3,13 +3,15 @@
 <head>
     <title>Turing Display</title>
 	<link rel="stylesheet" href="css/interface.css">
-	
 	<script type="text/javascript" src="js/display.js"></script>
+	
 	<script type="text/javascript" src="js/turing.js"></script>
+	
 	<script type="text/javascript" src="js/exception.js"></script>
 	<script type="text/javascript" src="js/lexer.js"></script>
 	<script type="text/javascript" src="js/parser.js"></script>
 	<script type="text/javascript" src="js/ast.js"></script>
+	<script type="text/javascript" src="js/optimisier.js"></script>
 	<script type="text/javascript" src="js/assembler.js"></script>
 	<script type="text/javascript" src="js/compiler.js"></script>
 	<script>
@@ -191,7 +193,19 @@
 					<div id="loaderDiv" class="loader" hidden="true"></div>
 					<div id="compileCheckBoxDiv">
 						<input id="compileCheckBox" type="checkbox" checked autocomplete="off"/>
-						<label id="compileCheckBoxLabel">Show compiled code?</label>
+						<label id="compileCheckBoxLabel" for="compileCheckBox">Show compiled code</label>
+					</div>
+					<div id="arrangeStatesCheckBoxDiv">
+						<input id="arrangeStatesCheckBox" type="checkbox" />
+						<label id="arrangeStatesCheckBoxLabel" for="arrangeStatesCheckBox">Arrange states</label>
+					</div>
+					<div class="CheckBoxDiv">
+						<input class="CheckBox" id="unrechableStatesCheckBox" type="checkbox" />
+						<label class="CheckBoxLabel" for="unrechableStatesCheckBox">Remove unrechable states</label>
+					</div>
+					<div class="CheckBoxDiv">
+						<input class="CheckBox" id="misleadingStatesCheckBox" type="checkbox" />
+						<label class="CheckBoxLabel" for="misleadingStatesCheckBox">Remove misleadning states</label>
 					</div>
 				</div>
 			</div>

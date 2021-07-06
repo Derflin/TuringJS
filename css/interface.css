@@ -38,7 +38,7 @@ body{
 #compileLoader{
 	overflow: hidden;
 }
-#compileButtonDiv{
+#compileButtonDiv,#rangeStatesButtonDiv{
 	width: 110px;
 	float:left;
 }
@@ -47,7 +47,7 @@ body{
 	float:left;
 	margin-right: 5px;
 }
-#compileCheckBox{
+#compileCheckBox#rangeStatesCheckBox{
 	margin-top: 10px;
 	overflow: hidden;
 }

@@ -146,7 +146,7 @@ class Turing {
         if(this.processing){
             if(typeof this.transit[curState] !== 'undefined' && typeof this.transit[curState][curChar] !== 'undefined'){
                 this.step += 1;
-                document.getElementById('startErrorLabel').innerHTML = "Step " + this.step + "<br/><br/>" + printActualRule(this.transit[curState][curChar], curState, curChar);
+                document.getElementById('startErrorLabel').innerHTML = "Step " + this.step + "<br/><br/>" + printActualRule(this.transit[curState][curChar], curState, curChar,dbg);
                 
                 //aktualizacja ostatnio przetwarzanych danych
                 this.lastChar = curChar;

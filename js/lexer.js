@@ -48,20 +48,14 @@ class lexer{
 		}
 	}
 	
-	error(message){
-		let pos_inf="("+this.line+","+this.column+")";
-		if(message==null || message==undefined)
-			message="Unexpected character: "+this.curr;
-		return pos_inf+message;
-	}
-	ok(message){
-		return (message==undefined)?"Succed lexical analize":message;
-	}
 	throwUnexpectedCharacter(expected){
 		throw new unexpectedCharacterError([this.line,this.column,this.pos],this.curr,expected);
 	}
+	here(){
+		return [this.line,this.column,this.pos];
+	}
 	startToken(){
-		return this.starttoken=[this.line,this.column,this.pos];
+		return this.starttoken=this.here();
 	}
 	createToken(type,value){
 		return new token(type,value,this.starttoken,this.startToken());
@@ -252,10 +246,11 @@ class lexer{
 		if(!this.test("'")){
 			this.throwUnexpectedCharacter("'");
 		}
+		let opened=this.createToken("'");
 		let value=BigInt(this.curr.charCodeAt(0));
 		this.next();
 		if(!this.test("'")){
-			this.throwUnexpectedCharacter("'");
+			throw new unclosedError(opened,"'","character",this.here());//this.throwUnexpectedCharacter("'");
 		}
 		return this.createToken("integer",value);
 	}
