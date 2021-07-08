@@ -3,15 +3,22 @@ class astNode{
 		this.start=start;
 		this.end=end;
 	}
+	/*
+	virtual:
+	 calc(symbols)	return value of node after evaluation
+	 stringify()	return string with intents pretend AST tree
+	 typing(symbols)return type of value after evaluation, decide the way of calculations, inserts casting
+	*/
 	static fromToken(token){
 		return new astNode(token.start,token.end);
 	}
 }
+//array containing operators as functions
 let binops=[];
 {
 let operators=["**","*","/","%","+","-","*",">>","<<","&","|","^"];
 let types=["integer","set"];
-let funformat={/* sign + is replaced by other operators*/
+let funformat={// sign + is replaced by other operators
 	integer:{
 		integer:"(a,b)=>a+b",
 		set:"(a,b)=>new Set([...b].map((b)=>a+b))"
@@ -33,7 +40,8 @@ for(let op of operators){
 	}
 }
 }
-let lops=[];//JS have only prefix unary operators
+//array containing operators as functions
+let lops=[];
 {
 let operators=["-","~","!"];
 let types=["integer","set"];
@@ -134,7 +142,7 @@ class union{
 		return "set";
 	}
 }
-class difference{
+class difference{//set difference
 	constructor(first,second){
 		this.first=first
 		this.second=second
@@ -282,26 +290,20 @@ class range{
 	}
 }
 
-class AST{
+class AST{//root of AST tree
 	constructor(symbols,states,chars,dirs){
 		this.symbols=symbols;
-		/*this.states=states;
-		this.chars=chars;
-		this.dirs=dirs;*/
 		this.rules=[];
 	}
 	add(rule){
 		this.rules.push(rule);
 	}
-	getIterator(){
+	getIterator(){//iterator over all transitions
 		return new this.iterator(this);
 	}
 	stringify(h=0){ 
 		return [
 			[...this.symbols].map((a)=>' '.repeat(h)+a[0]+'\n'+Object.entries(a[1]).map((x)=>' '.repeat(h+1)+x[0]+':'+x[1]).join('\n')).join('\n'),
-			/*this.states.stringify(h+1),
-			this.chars.stringify(h+1),
-			this.dirs.stringify(h+1),*/
 			this.rules.map((r)=>r.stringify(h+1)).join('\n')
 		].join('\n');
 	}
@@ -354,7 +356,7 @@ class integer{
 		return "integer";
 	}
 }
-class set{
+class set{//to join with union and split by typing
 	constructor(value){
 		this.value=new Set(value);
 	}
