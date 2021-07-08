@@ -60,7 +60,7 @@ Each rule is constructed according to the following syntax:
 
 * **[charExpression]** and **[stateExpression]** operate on the same syntax, where user can (except providing a value or identifier):
 
-   * do basic mathematical nad logical operations, such as
+   * do basic mathematical and logical operations, such as
       * addition '+' - (@=<0,10>,3)=>(**@+30**,14)+x
       * subtraction '-' - (0,S={2,5,6,20})=>(0,**S-10**)+x-y
       * multipication '*' - (@={<'A','Z'>},S=<420,449>)=>(@,**S\*5**)
@@ -102,4 +102,51 @@ After declaring constant variables they can be used in rules:
 **var = 9**
 &nbsp;\
 (@=<'a','z'>,**S=var**)=>(@,**var+5**)-y
+
+## Compiler optimalizations
+### Arrange states
+If a code has gaps between states, you can remove them by checking "Arrange states". The states change their value, so both old and new state value is displayed by current rule separated by "🠔".
+
+Gaps between states can occur when you load letters into state or use constants with unadjusted values.
+
+(@={<'a','z'>,<'A','Z'>},0)=>(@,@)
+There is no defined states between 91 and 96 (respectivli '[','\\',']','^','_','`') and, but 90 and 97 (respectivli 'Z' and 'a') are.
+
+load=0\
+write=50\
+swap=100\
+(@=<'a','z'>,load)=>(@,swap+@-'a')+//arrange <97,122> to <0,25>\
+(@=<'a','z'>,s=swap+<'a','z'>-'a')=>(s-swap+'a',s-swap+write)+\
+(@=<'a','z'>,s=write+<'a','z'>-'a')=>(s-write+'a',load)+\
+(0,load)=>(0,load)\
+In this case gap between states (load,write,swap) are to lose, should be equal to 26 (load=0,write=26 and swap=52)
+
+### Remove unrechable states
+If your code generates rules that can't be reached this option allow you to remove them from the result code. This optimization removes also gaps between states.
+
+Unreachable states can occur by certain math properties or caring for code readability.
+
+loadRoundedToEven=0\
+write=50\
+(@=<'0','9'>,loadRoundedToEven)=>(@,write+(@-'0')&-2)+\
+('.',s=write+<0,9>)=>(s-write+'0',loadRoundedToEven)+\
+(0,loadRoundedToParity)=>(0,loadRoundedToEven)\
+There are unreachable states, e.g. state 51 (write+1) is unreachable because loadRoundedToEven load only parity values.
+
+### Remove misleading states
+This optimization removes states that have deleted all transitions and transitions leading to nonexisting states. States creating cycles aren't deleted.
+
+A misleading state and transition can be caused by the math property or programming style.
+
+loadRoundedToParity=0\
+and=50\
+write=100\
+(@=<'0','9'>,loadRoundedToEven)=>(@,and+(@-'0')&-2)+\
+(@=<'0','9'>,s=and+<0,9>)=>(@,write+(@-'0')&(s-and))+\
+('.',s=write+(<0,9>&-2))=>(s-write+'0',loadRoundedToEven)+\
+(0,loadRoundedToEven)=>(0,loadRoundedToEven)\
+State 51 (and+1) is misleading because has only one transition to state 101 (write+1) which doesn't exist. The transition is deleted, then the state is deleted.
+
+
+
 
