@@ -1,4 +1,29 @@
 class parser{
+/*
+parser represents the syntax analysis.
+parser grammar:
+	program: definitions rule* eof
+	(program)
+	definitions: (identifier '=' integer)*
+	(definitions)
+	rule:'(' tape_condition ',' state_condition ')' '=>' '(' tape_value ',' state_value ')' move
+	(rule)
+	tape_condition,state_condition: assign_or_expression
+	(tape_condition,state_condition)
+	assign_or_expression: [identifier '='] expression
+	(expression_assign)
+	expression: expression bop expression | lop expression | '(' expression ')' | union | interset | integer | identifier
+	(expression,expression0,expression0_1,expression1,expression2,expression3,expression4,expression5)
+	bop: '+' | '-' | '*' | '/' | '%' | '**' | '<<' | '>>' | '&' | '|' | '^' | '\\' | '`' | '``'
+	lop: '~' | '-'
+	union: '{' union_list '}'
+	union_list: [expression (',' expression)*]
+	interset : '<' expression ',' expression '>'
+	tape_value,state_value: expression
+	(tape_value,state_value)
+	move: [('+' | '-') [[integer] identifier]] | (('+' | '-') [integer] identifier)*
+	(move,secondmove)
+*/
 	constructor(lexer){
 		this.lexer=lexer;
 		this.ahead=[this.lexer.getToken()];
@@ -14,7 +39,7 @@ class parser{
 		this.ahead.shift();
 		this.ahead.push(this.lexer.getToken());
 	}
-	test(type,value){//require to given arguments fit
+	test(type,value){//require given arguments to fit
 		if(type==this.curr[0] && (value==this.curr[1] || value==null || value==undefined)){
 			let ret=this.curr[1]
 			this.next();
@@ -23,7 +48,7 @@ class parser{
 			this.throwUnexpectedToken([type])
 		}
 	}
-	match(type,value){//if type is fit return value
+	match(type,value){//if type is fitting return value
 		if(type!=this.curr[0]){
 			return false;
 		}else if(value==this.curr[1]){
@@ -36,7 +61,7 @@ class parser{
 			return false;
 		}
 	}
-	pinch(type,def){//if type fit return value, else default
+	pinch(type,def){//if type fits return value, else default
 		if(type!=this.curr[0]){
 			return def;
 		}else{
@@ -57,7 +82,7 @@ class parser{
 		return [currState,currChar,newState,newChar,motion];
 	}
 	
-	program(){
+	program(){//program: definitions rule* eof
 		let symbols=this.definitions()
 		let ast=new AST(symbols);
 		let rule;
@@ -68,7 +93,7 @@ class parser{
 		this.test("eof");
 		return [ast,undefined];
 	}
-	definitions(){
+	definitions(){//definitions: (identifier '=' integer)*
 		let symbols=new Map();
 		while(this.curr[0]=="identifier"){
 			switch(this.curr[1]){
@@ -131,7 +156,7 @@ class parser{
 	getRule(){
 		return this.rule();
 	}
-	rule(){
+	rule(){//rule:'(' tape_condition ',' state_condition ')' '=>' '(' tape_value ',' state_value ')' move
 		this.test("(");
 		let curchar=this.tape_condition();
 		this.test(",");
@@ -158,7 +183,7 @@ class parser{
 	state_value(){
 		return this.expression();
 	}
-	move(){
+	move(){//move: [('+' | '-') [[integer] identifier [secondmove]]]
 		let step
 		switch(this.curr[0]){
 		case'+':
@@ -192,7 +217,7 @@ class parser{
 			return new move([new integer(0)],[new integer(step)])
 		}
 	}
-	secondmove(){
+	secondmove(){//('+' | '-') [[integer] identifier [secondmove]]
 		let step
 		switch(this.curr[0]){
 		case'+':
@@ -234,7 +259,7 @@ class parser{
 		this.throwUnexpectedToken("expression");
 	}
 	
-	expression0(){//integer,identifier,(),unary - ~ !
+	expression0(){//integer,identifier,(),prefiksed unary - ~
 		let a,b,f;
 		do{
 			switch(this.curr[0]){
@@ -278,10 +303,9 @@ class parser{
 			default:
 				return a;
 			}
-			//a=new func(f,[this.expression()]);
 		}while(true);
 	}
-	expression0_1(){// \ `
+	expression0_1(){// \ ` ``
 		let a=this.expression0();
 		let b;
 		do{
@@ -412,7 +436,7 @@ class parser{
 			}
 		}while(true);
 	}
-	expression_assign(){
+	expression_assign(){//[identifier '='] expression
 		let name,expr;
 		switch(this.curr[0]){
 		case"identifier":
