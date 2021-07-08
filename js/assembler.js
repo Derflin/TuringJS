@@ -16,24 +16,15 @@ class assembler{
 			if(code[rule.state][rule.chr]!= undefined)
 				throw "redefinition"
 			code[rule.state][rule.chr]=[rule.newchar,String.fromCharCode(Number(rule.newstate)),rule.move.map((step)=>Number(step))];
-			++rules;
 			
+			//for fill statistic
+			++rules;
 			if(maxstate<rule.state){
 				maxstate=rule.state;
 			}
-			/*
-			if(maxstate<rule.newstate){
-				maxstate=rule.newstate;
-			}
-			*/
 			if(maxchar<rule.chr){
 				maxchar=rule.chr;
 			}
-			/*
-			if(maxchar<rule.newchar){
-				maxchar=rule.newchar;
-			}
-			*/
 		}
 		code[0].length=Number(maxchar);
 		console.timeEnd("assembling");
