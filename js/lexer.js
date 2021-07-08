@@ -15,6 +15,43 @@ class token{
 	}
 }
 class lexer{
+/*
+lexer reprezents the lexical analysis
+lexer grammar:
+			regular expression	meaning					token		realisation
+			[ \n\t]				white character			none		getToken
+			//[^\n]*\n			singleline comment		none		singlelinecomment
+			/[*]{x}.*[*]{x}/	multiline comment		none		multilinecomment
+			+					operator or direction	'+'			getToken
+			-					operator or direction	'-'			getToken
+			~					operator 				'~'			getToken
+			%					operator				'%'			getToken
+			/					operator				'/'			getToken
+			[*]					operator				'*'			getToken
+			"**"				operator				'**'		getToken
+			<<					operator				'<<'		getToken
+			>>					operator				'>>'		getToken
+			&					operator				'&'			getToken
+			|					operator				'|'			getToken
+			^					operator				'^'			getToken
+			\					operator				'`'			getToken
+			`					operator				'`'			getToken
+			``					operator				'``'		getToken
+			<					range opening bracket	'<'			getToken
+			>					range closing bracket	'>'			getToken
+			(					opening parenthesis		'('			getToken
+			)					closing parenthesis 	')'			getToken
+			{					opening union			'{'			getToken
+			}					closing union		 	'}'			getToken
+			,					separator				','			getToken
+			=					assign					'='			getToken
+			=>					transition				'=>'		getToken
+			[0-9][0-9_]*		integer					'integer'	integer
+			['].[']				Unicode character		'integer'	character
+			[a-zA-z@][a-zA-Z_]*	identifier				'identifier'identifier
+			'/0'|''				end of file				'eof'		getToken
+	
+*/
 	constructor(code){
 		this.code=code;
 		this.pos=0;
@@ -22,7 +59,7 @@ class lexer{
 		this.column=1;
 	}
 	
-	get curr(){
+	get curr(){//current character
 		return this.code.charAt(this.pos);
 	}
 	next(){
@@ -79,9 +116,7 @@ class lexer{
 			case'\n':
 			case'\t':
 				this.next();
-				//return this.getToken();
 			break;
-			//pass on tokens
 			case'/'://operator,comment
 				this.next();
 				switch(this.curr){
