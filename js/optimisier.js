@@ -128,24 +128,14 @@ removeMisleading.moveCorrectStates=(rulesSrc,state,rulesDst)=>{
 }
 
 
-function getClass(state,invertTransit){
-	let [newstate,newchar,move]=transit;
-	
-	let transitClass=invertTransit;	
-	move.forEach((step,dimension)=>{
-		steps=steps[step];
-	})
-	transitClass=transitClass[newchar];
-	
-}
 
 function applyCodeOptimisations(code,optimalisationList){
 	let dbg=Array.from(code,(chars,state)=>state);
 	optimalisationList.forEach((optimalisation)=>{
 		let dbgOpt = optimalisation(code);
-		dbgOpt.map((original,newly)=>
-			dbg[original]
-		)
+		for(let newly=0;newly<Math.max(dbgOpt.length,dbg.length);++newly){
+			dbgOpt[newly]=dbg[dbgOpt[newly]??newly]
+		}
 		dbg=dbgOpt;
 	});
 	return dbg;
